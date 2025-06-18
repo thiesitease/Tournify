@@ -34,7 +34,7 @@ namespace Gemelo.Applications.Tournify.Clock.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("MatchRow Columns6")]
+        [global::System.Configuration.DefaultSettingValueAttribute("MatchRow")]
         public string ClassMatchResultRow {
             get {
                 return ((string)(this["ClassMatchResultRow"]));
@@ -56,6 +56,15 @@ namespace Gemelo.Applications.Tournify.Clock.Properties {
         public string ClassMatchCurrentTime {
             get {
                 return ((string)(this["ClassMatchCurrentTime"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("00:25:00")]
+        public global::System.TimeSpan MatchDuration {
+            get {
+                return ((global::System.TimeSpan)(this["MatchDuration"]));
             }
         }
     }

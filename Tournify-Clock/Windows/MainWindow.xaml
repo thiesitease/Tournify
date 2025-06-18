@@ -1,4 +1,4 @@
-﻿<Window 
+﻿<Window xmlns:Matches="clr-namespace:Gemelo.Applications.Tournify.Clock.Controls.Matches"  
     xmlns:Common="clr-namespace:Gemelo.Applications.Tournify.Clock.Controls.Common"  
     x:Class="Gemelo.Applications.Tournify.Clock.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -10,17 +10,25 @@
     Title="gemelo's Tournify Clock" Height="1080" Width="1920">
 
     <Window.Resources>
-        <Style
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="\TournifyClock;component/Resources/Xaml/TextStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <!--<Style
             TargetType="TextBlock">
-            <Setter Property="FontSize" Value="20"/>
-        </Style>
+                <Setter Property="FontSize" Value="20"/>
+            </Style>-->
+        </ResourceDictionary>
     </Window.Resources>
-    
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="300"/>
-            <RowDefinition/>
-            <RowDefinition Height="500"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="1*"/>
+            <!--<RowDefinition Height="Auto"/>
+            <RowDefinition Height="1.5*"/>-->
         </Grid.RowDefinitions>
 
         <!--<Grid.ColumnDefinitions>
@@ -69,7 +77,7 @@ aktuelle Uhrzeit
         </StackPanel>
 
         <StackPanel
-            Margin="20"
+            Margin="30,0"
             HorizontalAlignment="Right"
             VerticalAlignment="Center">
 
@@ -83,17 +91,19 @@ aktuelle Uhrzeit
                 FontSize="80"
                 ShowCurrentTime="False"
                 HorizontalAlignment="Center"
+                IsRemainingPlayingClock="True"
                 x:Name="m_DigitalClockRemainingPlay"
                 />
 
             <TextBlock
-                FontSize="30"
+                FontSize="40"
                 HorizontalAlignment="Center">
                 verbleibende Pause
             </TextBlock>
 
             <Common:DigitalClock 
                 FontSize="60"
+                IsRemainingBreakClock="True"
                 ShowCurrentTime="False"
                 HorizontalAlignment="Center"
                 x:Name="m_DigitalClockRemainingBreak"
@@ -102,7 +112,93 @@ aktuelle Uhrzeit
 
         </StackPanel>
 
+        <!--<Border
+            Grid.Row="1"
+            Grid.RowSpan="2"
+            Background="#FFDFFFDF"
+            />-->
+        <ScrollViewer
+            PanningMode="VerticalOnly"
+            Grid.Row="1">
+            <StackPanel
+            >
+
+                <StackPanel
+                Background="#FFDFFFDF">
+
+                    <TextBlock
+                  Margin="20,20,0,0"
+                  FontSize="30"
+                  HorizontalAlignment="Left">
+                  aktuelle Spiele
+                    </TextBlock>
+
+                    <Matches:MatchesDisplay
+                    MinHeight="60"
+                    VerticalAlignment="Top"
+                    Margin="20,10"
+                    Grid.Row="2"
+                    x:Name="m_MatchesDisplayCurrent" />
+
+                </StackPanel>
+
+                <StackPanel
+                Background="#FFFFF6C1">
+
+                    <TextBlock
+                  Margin="20,20,0,0"
+                  FontSize="30"
+                  HorizontalAlignment="Left">
+                  bereit machen
+                    </TextBlock>
+
+                    <Matches:MatchesDisplay
+                    MinHeight="60"
+                    VerticalAlignment="Top"
+                    Margin="20,10"
+                    Grid.Row="2"
+                    x:Name="m_MatchesDisplayReadyToPrepare" />
+
+                </StackPanel>
+
+                <StackPanel
+       Background="#FFD5E8ED">
 
 
+                    <TextBlock
+            Margin="20,20,0,0"
+            Grid.Row="3"
+            FontSize="30"
+            HorizontalAlignment="Left">
+            nächste Spiele
+                    </TextBlock>
+
+                    <Matches:MatchesDisplay
+            VerticalAlignment="Top"
+                    MinHeight="60"
+            Margin="20,10"
+            Grid.Row="4"
+            x:Name="m_MatchesDisplayUpcoming" />
+
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+        
+        <Canvas
+            Visibility="Collapsed"
+            Background="Pink"
+                Opacity="0.5"
+            Grid.Row="1"
+            Grid.RowSpan="5"
+            Margin="900,10"
+            Width="1920"
+            >
+            <Matches:MatchesDisplay
+                Width="800"
+                VerticalAlignment="Top"
+                HorizontalAlignment="Left"
+                x:Name="m_MatchesDisplayDebug" />
+
+        </Canvas>
     </Grid>
 </Window>

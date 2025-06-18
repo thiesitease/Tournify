@@ -1,4 +1,7 @@
-﻿using Grpc.Net.Client.Balancer;
+﻿using Gemelo.Applications.Tournify.Clock.Apps;
+using Gemelo.Applications.Tournify.Clock.Code.Models;
+
+using Grpc.Net.Client.Balancer;
 
 using System;
 using System.Collections.Generic;
@@ -24,6 +27,9 @@ public partial class DigitalClock : UserControl
 {
     private DispatcherTimer m_Timer;
     private TimeSpan m_Time = TimeSpan.Zero;
+
+    public bool IsRemainingPlayingClock { get; set; }
+    public bool IsRemainingBreakClock { get; set; }
 
     public TimeSpan Time
     {
@@ -55,21 +61,102 @@ public partial class DigitalClock : UserControl
     }
 
 
+    private List<MatchModel> m_Matches = null;
+
+    public List<MatchModel>? Matches
+    {
+        get { return m_Matches; }
+        set
+        {
+            if (value != m_Matches)
+            {
+                m_Matches = value;
+            }
+        }
+    }
+
+
 
     public DigitalClock()
     {
         InitializeComponent();
         m_Timer = new DispatcherTimer();
         m_Timer.Interval = TimeSpan.FromSeconds(1);
-        m_Timer.Tick += Timer_Tick;
-        m_Timer.Start();
+
+        Time = TimeSpan.Zero;
+
+        if (App.Current != null)
+        {
+#if (DEBUG)
+            m_Timer.Interval = TimeSpan.FromSeconds(1) / App.Current.FakeTimeFactor;
+
+#endif
+            m_Timer.Tick += Timer_Tick;
+            m_Timer.Start();
+        }
+
+
     }
+
+    private bool m_HasSpoken;
 
     private void Timer_Tick(object? sender, EventArgs e)
     {
         if (ShowCurrentTime)
         {
-            Time = DateTime.Now.TimeOfDay;
+            Time = App.Current.Now.TimeOfDay;
+        }
+        else if (Matches?.Count > 0)
+        {
+            FontSize = 80;
+            MatchModel match = Matches[0];
+
+            DateTime remaining;
+
+            if (IsRemainingPlayingClock)
+            {
+                remaining = match.EndTime - App.Current.Now.TimeOfDay;
+
+                if (remaining.TimeOfDay < TimeSpan.FromMinutes(1))
+                {
+                    if (!m_HasSpoken)
+                    {
+                        m_HasSpoken = true;
+                        App.Current.SpeechSynthesizer.SpeakAsync("Noch eine Minute zu Spielen!");
+                    }
+                }
+                else
+                {
+                    m_HasSpoken = false;
+                }
+            }
+            else if (IsRemainingBreakClock)
+            {
+                remaining = match.StartTime - App.Current.Now.TimeOfDay;
+
+                if (remaining.TimeOfDay < TimeSpan.FromMinutes(1))
+                {
+                    if (!m_HasSpoken)
+                    {
+                        m_HasSpoken = true;
+                        App.Current.SpeechSynthesizer.SpeakAsync("Noch eine Minute bis zum Start!");
+                    }
+                }
+                else
+                {
+                    m_HasSpoken = false;
+                }
+            }
+            else
+            {
+                remaining = DateTime.Now;
+            }
+            Time = remaining.TimeOfDay;
+        }
+        else
+        {
+            FontSize = 50;
+            Time = TimeSpan.Zero;
         }
     }
 

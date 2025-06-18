@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Gemelo.Applications.Tournify.Clock.Apps;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,35 +24,42 @@ namespace Gemelo.Applications.Tournify.Clock.Controls.Common;
 /// </summary>
 public partial class AnalogClock : UserControl
 {
-    RotateTransform secondTransform;
-    RotateTransform minuteTransform;
-    RotateTransform hourTransform;
+    RotateTransform m_SecondTransform;
+    RotateTransform m_MinuteTransform;
+    RotateTransform m_HourTransform;
 
-    DispatcherTimer timer = new DispatcherTimer();
+    DispatcherTimer m_Timer;
 
-    const double centerX = 200;
-    const double centerY = 200;
-    const double radius = 190;
+    const double CenterX = 200;
+    const double CenterY = 200;
+    const double Radius = 190;
 
     public AnalogClock()
     {
         InitializeComponent();
 
-        secondTransform = new RotateTransform(0, 200, 200);
-        minuteTransform = new RotateTransform(0, 200, 200);
-        hourTransform = new RotateTransform(0, 200, 200);
+        m_SecondTransform = new RotateTransform(0, 200, 200);
+        m_MinuteTransform = new RotateTransform(0, 200, 200);
+        m_HourTransform = new RotateTransform(0, 200, 200);
 
         DrawClockFace();
 
-        secondHand.RenderTransform = secondTransform;
-        minuteHand.RenderTransform = minuteTransform;
-        hourHand.RenderTransform = hourTransform;
+        secondHand.RenderTransform = m_SecondTransform;
+        minuteHand.RenderTransform = m_MinuteTransform;
+        hourHand.RenderTransform = m_HourTransform;
 
-        timer.Interval = TimeSpan.FromSeconds(1);
-        timer.Tick += Timer_Tick;
-        timer.Start();
+        if (App.Current != null)
+        {
+            m_Timer = new DispatcherTimer();
+            m_Timer.Interval = TimeSpan.FromSeconds(1);
+#if (DEBUG)
+            m_Timer.Interval = TimeSpan.FromSeconds(1) / App.Current.FakeTimeFactor;
+#endif
+            m_Timer.Tick += Timer_Tick;
+            m_Timer.Start();
+            UpdateClock(); // initial
+        }
 
-        UpdateClock(); // initial
     }
 
     private void Timer_Tick(object sender, EventArgs e)
@@ -60,15 +69,15 @@ public partial class AnalogClock : UserControl
 
     private void UpdateClock()
     {
-        DateTime now = DateTime.Now;
+        DateTime now = App.Current.Now;
 
         double secondAngle = now.Second * 6;
         double minuteAngle = now.Minute * 6 + now.Second * 0.1;
         double hourAngle = (now.Hour % 12) * 30 + now.Minute * 0.5;
 
-        secondTransform.Angle = secondAngle;
-        minuteTransform.Angle = minuteAngle;
-        hourTransform.Angle = hourAngle;
+        m_SecondTransform.Angle = secondAngle;
+        m_MinuteTransform.Angle = minuteAngle;
+        m_HourTransform.Angle = hourAngle;
 
     }
 
@@ -79,13 +88,13 @@ public partial class AnalogClock : UserControl
             double angle = i * 6;
             double rad = angle * Math.PI / 180;
 
-            double inner = (i % 5 == 0) ? radius - 20 : radius - 10;
-            double outer = radius;
+            double inner = (i % 5 == 0) ? Radius - 20 : Radius - 10;
+            double outer = Radius;
 
-            double x1 = centerX + inner * Math.Sin(rad);
-            double y1 = centerY - inner * Math.Cos(rad);
-            double x2 = centerX + outer * Math.Sin(rad);
-            double y2 = centerY - outer * Math.Cos(rad);
+            double x1 = CenterX + inner * Math.Sin(rad);
+            double y1 = CenterY - inner * Math.Cos(rad);
+            double x2 = CenterX + outer * Math.Sin(rad);
+            double y2 = CenterY - outer * Math.Cos(rad);
 
             Line tick = new Line
             {
@@ -105,9 +114,9 @@ public partial class AnalogClock : UserControl
             double angle = i * 30;
             double rad = angle * Math.PI / 180;
 
-            double r = radius - 35;
-            double x = centerX + r * Math.Sin(rad);
-            double y = centerY - r * Math.Cos(rad);
+            double r = Radius - 35;
+            double x = CenterX + r * Math.Sin(rad);
+            double y = CenterY - r * Math.Cos(rad);
 
             TextBlock number = new TextBlock
             {

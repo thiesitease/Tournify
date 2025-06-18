@@ -32,7 +32,7 @@ public partial class WebWindow : Window
 
         m_Timer=new DispatcherTimer();
         m_Timer.Tick += Timer_Tick;
-        m_Timer.Interval = TimeSpan.FromSeconds(5);
+        m_Timer.Interval = TimeSpan.FromSeconds(1);
         m_Timer.Start();
     }
 
@@ -73,7 +73,7 @@ public partial class WebWindow : Window
         try
         {
             await m_Web.EnsureCoreWebView2Async(null);
-            m_Web.Source = new(Settings.Default.TournifyUrl);
+            m_Web.Source = App.Current.Connector.TournifyUri;
         }
         catch
         {

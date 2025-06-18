@@ -1,0 +1,71 @@
+﻿<UserControl 
+    x:Class="Gemelo.Applications.Tournify.Clock.Controls.Matches.MatchDisplay"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    xmlns:local="clr-namespace:Gemelo.Applications.Tournify.Clock.Controls.Matches"
+    mc:Ignorable="d" 
+    Margin="0,5"
+    d:DesignHeight="150" d:DesignWidth="1920">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="\TournifyClock;component/Resources/Xaml/TextStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <Style
+                TargetType="TextBlock"
+                BasedOn="{StaticResource TextStyleDefault}"
+                >
+                <Setter Property="HorizontalAlignment" Value="Left"/>
+                <Setter Property="VerticalAlignment" Value="Center"/>
+                <Setter Property="FontSize" Value="30"/>
+                <Setter Property="Margin" Value="10,5"/>
+            </Style>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.2*"/>
+            <ColumnDefinition Width="0.3*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="0.4*"/>
+            <ColumnDefinition Width="0.5*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Border
+            Background="DarkBlue"
+            Grid.ColumnSpan="2"
+            />
+
+        <TextBlock
+            Foreground="White"
+            x:Name="m_TxtDay"
+            Grid.Column="0"/>
+        <TextBlock
+            Foreground="White"
+            x:Name="m_TxtTime"
+            Grid.Column="1"/>
+        <TextBlock
+            FontWeight="Bold"
+            x:Name="m_TxtTeam1"
+            Grid.Column="2"/>
+        <TextBlock
+            FontWeight="Bold"
+            x:Name="m_TxtTeam2"
+            Grid.Column="3"/>
+        <TextBlock
+            x:Name="m_TxtPool"
+            Grid.Column="4"/>
+        <TextBlock
+            x:Name="m_TxtField"
+            Grid.Column="5"/>
+        <TextBlock
+            FontSize="25"
+            x:Name="m_TxtReferee"
+            Grid.Column="6"/>
+
+    </Grid>
+</UserControl>

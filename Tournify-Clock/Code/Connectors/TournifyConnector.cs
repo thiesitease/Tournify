@@ -20,6 +20,8 @@ using Gemelo.Applications.Tournify.Clock.Code.Enumerations;
 namespace Gemelo.Applications.Tournify.Clock.Code.Connectors;
 public class TournifyConnector
 {
+    public const int AnalyseMatchesMaxCount = 20;
+
     #region private Memmber
 
     private bool m_ProceedSearch;
@@ -88,14 +90,15 @@ public class TournifyConnector
         }
     }
 
-    private string? GetClassAttributeValue(HtmlNode node)
+    private string? GetAttributeValueByName(HtmlNode node, string attribName)
     {
         string? result = null;
         foreach (var attrib in node.Attributes)
         {
-            if (attrib.Name == "class")
+            if (attrib.Name == attribName)
             {
                 result = attrib.Value;
+                break;
             }
         }
         return result;
@@ -108,8 +111,8 @@ public class TournifyConnector
             bool digDeeper = true;
             if (parentNode.Name == "div")
             {
-                string? classValue = GetClassAttributeValue(parentNode);
-                if (classValue == Settings.Default.ClassMatchResultRow)
+                string? classValue = GetAttributeValueByName(parentNode, "class");
+                if (classValue != null && classValue.Contains(Settings.Default.ClassMatchResultRow))
                 {
                     AnalyseMatchResultRow(model, parentNode);
                     digDeeper = false;
@@ -141,10 +144,10 @@ public class TournifyConnector
         {
             model.MatchModels.Add(m_CurrentMatchModel);
             m_CurrentMatchModel = null;
+            m_CountFoundResults++;
         }
 
-        m_CountFoundResults++;
-        if (m_CountFoundResults >= Settings.Default.DisplayNextMatchesCount)
+        if (m_CountFoundResults >= AnalyseMatchesMaxCount)
         {
             m_ProceedSearch = false;
         }
@@ -167,7 +170,7 @@ public class TournifyConnector
     {
         if (m_CurrentMatchModel != null)
         {
-            string? classValue = GetClassAttributeValue(parentNode);
+            string? classValue = GetAttributeValueByName(parentNode, "class");
             if (mode == AnalyseMatchResultRow_SearchMode.Default && !string.IsNullOrEmpty(classValue))
             {
                 //if (classValue.Contains("CurrentTime"))

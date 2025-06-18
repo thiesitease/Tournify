@@ -15,6 +15,7 @@
             <Setter Property="FontFamily" Value="OCR A Extended"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="Text" Value="0"/>
         </Style>
     </UserControl.Resources>
     <Grid>
@@ -30,27 +31,21 @@
         </Grid.ColumnDefinitions>
 
         <TextBlock
-            Text="8"
             x:Name="m_TxtHourBig"/>
         <TextBlock
             Grid.Column="1"
-            Text="8"
             x:Name="m_TxtHourSmall"/>
         <TextBlock
             Grid.Column="3"
-            Text="8"
             x:Name="m_TxtMinuteBig"/>
         <TextBlock
             Grid.Column="4"
-            Text="8"
             x:Name="m_TxtMinuteSmall"/>
         <TextBlock
             Grid.Column="6"
-            Text="8"
             x:Name="m_TxtSecondBig"/>
         <TextBlock
             Grid.Column="7"
-            Text="8"
             x:Name="m_TxtSecondSmall"/>
 
         <TextBlock

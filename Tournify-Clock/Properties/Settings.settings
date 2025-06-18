@@ -6,13 +6,16 @@
       <Value Profile="(Default)">https://www.tournify.de/live/kiwicup/present/5</Value>
     </Setting>
     <Setting Name="ClassMatchResultRow" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">MatchRow Columns6</Value>
+      <Value Profile="(Default)">MatchRow</Value>
     </Setting>
     <Setting Name="DisplayNextMatchesCount" Type="System.Int32" Scope="Application">
       <Value Profile="(Default)">4</Value>
     </Setting>
     <Setting Name="ClassMatchCurrentTime" Type="System.String" Scope="Application">
       <Value Profile="(Default)">CurrentTime</Value>
+    </Setting>
+    <Setting Name="MatchDuration" Type="System.TimeSpan" Scope="Application">
+      <Value Profile="(Default)">00:25:00</Value>
     </Setting>
   </Settings>
 </SettingsFile>
