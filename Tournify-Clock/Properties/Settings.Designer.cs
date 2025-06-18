@@ -31,5 +31,32 @@ namespace Gemelo.Applications.Tournify.Clock.Properties {
                 return ((string)(this["TournifyUrl"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("MatchRow Columns6")]
+        public string ClassMatchResultRow {
+            get {
+                return ((string)(this["ClassMatchResultRow"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("4")]
+        public int DisplayNextMatchesCount {
+            get {
+                return ((int)(this["DisplayNextMatchesCount"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("CurrentTime")]
+        public string ClassMatchCurrentTime {
+            get {
+                return ((string)(this["ClassMatchCurrentTime"]));
+            }
+        }
     }
 }

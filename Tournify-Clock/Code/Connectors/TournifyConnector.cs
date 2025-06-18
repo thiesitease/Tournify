@@ -12,16 +12,44 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using HtmlAgilityPack;
 using System.Diagnostics;
+using Gemelo.Applications.Tournify.Clock.Properties;
+using Gemelo.Applications.Tournify.Clock.Code.Models;
+using Gemelo.Applications.Tournify.Clock.Code.Enumerations;
 
 
 namespace Gemelo.Applications.Tournify.Clock.Code.Connectors;
 public class TournifyConnector
 {
+    #region private Memmber
+
+    private bool m_ProceedSearch;
+    private int m_CountFoundResults;
+    private MatchModel? m_CurrentMatchModel;
+
+    //private TournifyModel m_InternalWorkingTournifyModel;
+
+    #endregion private Memmber
+
     #region öffentliche Properties
+
+    public TournifyModel TournifyModel { get; private set; } = new TournifyModel();
 
     public Uri TournifyUri { get; }
 
     #endregion öffentliche Properties
+
+    #region Events
+
+
+    public event EventHandler<EventArgs> ModelChanged;
+
+    protected void OnModelChanged()
+    {
+        ModelChanged?.Invoke(this, new EventArgs());
+    }
+
+
+    #endregion Events
 
     #region ctor
 
@@ -35,89 +63,180 @@ public class TournifyConnector
 
     #region öffentliche Methoden
 
-    //public async Task ReadContent(string html)
-    //{
-    //    try
-    //    {
-          
-
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //    }
-    //}
-
-
     public async Task ReadContent(string html)
     {
         try
         {
-            //var wc = new HttpClient();
-            //string webData = await wc.GetStringAsync(TournifyUri);
-
-            //var url = "https://example.com";  // Ersetze mit gewünschter URL
-
-            //using var httpClient = new HttpClient();
-            //var html = await httpClient.GetStringAsync(TournifyUri);
-
-            var htmlDoc = new HtmlDocument();
-            htmlDoc.LoadHtml(html);
-
-            Parse(htmlDoc.DocumentNode);
-
-            var linkNodes = htmlDoc.DocumentNode.SelectNodes("//a[@href]");
-
-            if (linkNodes != null)
+            TournifyModel tournifyModel = null;
+            await Task.Run(() =>
             {
-                foreach (var link in linkNodes)
-                {
-                    var href = link.GetAttributeValue("href", string.Empty);
-                    var text = link.InnerText.Trim();
+                var htmlDoc = new HtmlDocument();
+                htmlDoc.LoadHtml(html);
 
-                    Console.WriteLine($"Text: {text} | Link: {href}");
-                }
-            }
-            else
-            {
-                Console.WriteLine("Keine Links gefunden.");
-            }
+                m_ProceedSearch = true;
+                m_CountFoundResults = 0;
+                tournifyModel = new TournifyModel();
+                FindMatchResultRow(tournifyModel, htmlDoc.DocumentNode);
+            });
 
+            TournifyModel = tournifyModel!;
+            OnModelChanged();
         }
         catch (Exception ex)
         {
+            Debugger.Break();
         }
     }
 
-    private void Parse(HtmlNode parentNode)
+    private string? GetClassAttributeValue(HtmlNode node)
     {
-        if (parentNode.Name == "div")
+        string? result = null;
+        foreach (var attrib in node.Attributes)
         {
-            //Debugger.Break();
-            foreach (var attrib in parentNode.Attributes)
+            if (attrib.Name == "class")
             {
-                Debug.WriteLine(attrib.Name);
-                Debug.WriteLine(attrib.Value);
+                result = attrib.Value;
+            }
+        }
+        return result;
+    }
 
-                //if (attrib.Name == "class" )
-                //{
-                //    Debugger.Break();
-                //}
-
-
-                if (attrib.Name == "class" && 
-                    attrib.Value == "MatchRow Columns6")
+    private void FindMatchResultRow(TournifyModel model, HtmlNode parentNode)
+    {
+        if (m_ProceedSearch)
+        {
+            bool digDeeper = true;
+            if (parentNode.Name == "div")
+            {
+                string? classValue = GetClassAttributeValue(parentNode);
+                if (classValue == Settings.Default.ClassMatchResultRow)
                 {
-                    Debugger.Break();
+                    AnalyseMatchResultRow(model, parentNode);
+                    digDeeper = false;
+                }
+                else if (classValue == Settings.Default.ClassMatchCurrentTime)
+                {
+                    model.CurrentTimeString = parentNode.InnerText;
                 }
             }
 
-        }
-
-        foreach (var node in parentNode.ChildNodes)
-        {
-            Parse(node);
+            if (digDeeper && m_ProceedSearch)
+            {
+                foreach (var node in parentNode.ChildNodes)
+                {
+                    FindMatchResultRow(model, node);
+                }
+            }
         }
     }
+
+
+    private void AnalyseMatchResultRow(TournifyModel model, HtmlNode parentNode)
+    {
+        m_CurrentMatchModel = new MatchModel();
+
+        AnalyseMatchResultRow_AllSubs(parentNode, level: 0, mode: AnalyseMatchResultRow_SearchMode.Default);
+
+        if (m_CurrentMatchModel.IsValid)
+        {
+            model.MatchModels.Add(m_CurrentMatchModel);
+            m_CurrentMatchModel = null;
+        }
+
+        m_CountFoundResults++;
+        if (m_CountFoundResults >= Settings.Default.DisplayNextMatchesCount)
+        {
+            m_ProceedSearch = false;
+        }
+    }
+
+    private void AnalyseMatchResultRow_AllSubs(HtmlNode parentNode, int level, AnalyseMatchResultRow_SearchMode mode)
+    {
+        bool digDeeper = AnalyseMatchResultRow_Content(parentNode, level, mode);
+
+        if (digDeeper)
+        {
+            foreach (var childNode in parentNode.ChildNodes)
+            {
+                AnalyseMatchResultRow_AllSubs(childNode, level + 1, mode);
+            }
+        }
+    }
+
+    private bool AnalyseMatchResultRow_Content(HtmlNode parentNode, int level, AnalyseMatchResultRow_SearchMode mode)
+    {
+        if (m_CurrentMatchModel != null)
+        {
+            string? classValue = GetClassAttributeValue(parentNode);
+            if (mode == AnalyseMatchResultRow_SearchMode.Default && !string.IsNullOrEmpty(classValue))
+            {
+                //if (classValue.Contains("CurrentTime"))
+                //{
+                //    m_CurrentMatchModel.CurrentTime = parentNode.InnerText;
+                //    return false;
+                //}
+                if (classValue.Contains("FieldName"))
+                {
+                    m_CurrentMatchModel.FieldName = parentNode.InnerText;
+                    return false;
+                }
+                else if (classValue.Contains("Team1"))
+                {
+                    m_CurrentMatchModel.Team1 = parentNode.InnerText;
+                    return false;
+                }
+                else if (classValue.Contains("Team2"))
+                {
+                    m_CurrentMatchModel.Team2 = parentNode.InnerText;
+                    return false;
+                }
+                else if (classValue.Contains("PouleName"))
+                {
+                    m_CurrentMatchModel.PouleName = parentNode.InnerText;
+                    return false;
+                }
+                else if (classValue.Contains("MatchReferee"))
+                {
+                    m_CurrentMatchModel.MatchReferee = parentNode.InnerText;
+                    return false;
+                }
+                else if (classValue.Contains("MatchColumnScore")) //  MatchColumnScore WithDate undefined MatchColumn
+                {
+                    AnalyseMatchResultRow_AllSubs(parentNode, 0, AnalyseMatchResultRow_SearchMode.MatchColumnScore);
+                    return false;
+                }
+            }
+            else if (mode == AnalyseMatchResultRow_SearchMode.MatchColumnScore)
+            {
+                if (classValue == "MatchColumnScoreDate")
+                {
+                    m_CurrentMatchModel.MatchColumnScoreDateString = parentNode.InnerText;
+                    return false;
+                }
+                else if (classValue == null && level == 2)
+                {
+                    m_CurrentMatchModel.MatchColumnScoreTimeString = parentNode.InnerText;
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    //private void AnalyseMatchResultRow_MatchColumnScore(HtmlNode parentNode)
+    //{
+    //    if (parentNode.ChildNodes.Count > 0)
+    //    {
+    //        var node = parentNode.ChildNodes[0];
+    //        if (node.ChildNodes.Count > 2)
+    //        {
+    //            MatchColumnScoreDate
+    //        }
+    //    }
+    //}
+
+
 
 
 

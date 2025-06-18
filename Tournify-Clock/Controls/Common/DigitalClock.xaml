@@ -1,0 +1,65 @@
+﻿<UserControl 
+    x:Class="Gemelo.Applications.Tournify.Clock.Controls.Common.DigitalClock"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    xmlns:local="clr-namespace:Gemelo.Applications.Tournify.Clock.Controls.Common"
+    mc:Ignorable="d" 
+    d:DesignHeight="100" d:DesignWidth="400">
+    <UserControl.Resources>
+        <Style
+            TargetType="TextBlock">
+            <!--<Setter Property="FontSize" Value="60"/>-->
+            <Setter Property="FontSize" Value="{Binding FontSize, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:DigitalClock}}}"/>
+            <Setter Property="FontFamily" Value="OCR A Extended"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+        </Style>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="0.2*"/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="0.2*"/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+
+        <TextBlock
+            Text="8"
+            x:Name="m_TxtHourBig"/>
+        <TextBlock
+            Grid.Column="1"
+            Text="8"
+            x:Name="m_TxtHourSmall"/>
+        <TextBlock
+            Grid.Column="3"
+            Text="8"
+            x:Name="m_TxtMinuteBig"/>
+        <TextBlock
+            Grid.Column="4"
+            Text="8"
+            x:Name="m_TxtMinuteSmall"/>
+        <TextBlock
+            Grid.Column="6"
+            Text="8"
+            x:Name="m_TxtSecondBig"/>
+        <TextBlock
+            Grid.Column="7"
+            Text="8"
+            x:Name="m_TxtSecondSmall"/>
+
+        <TextBlock
+            Grid.Column="2"
+            Text=":"/>
+        <TextBlock
+            Grid.Column="5"
+            Text=":"/>
+
+
+    </Grid>
+</UserControl>

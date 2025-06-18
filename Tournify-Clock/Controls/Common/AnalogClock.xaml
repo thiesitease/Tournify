@@ -1,0 +1,32 @@
+﻿<UserControl 
+    x:Class="Gemelo.Applications.Tournify.Clock.Controls.Common.AnalogClock"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    Height="400"
+    Width="400"
+    >
+    <!--d:DesignHeight="450" d:DesignWidth="400"-->
+    <Grid>
+
+        <Canvas
+            Height="400"
+            Width="400"
+            x:Name="ClockCanvas"/>
+
+        <!-- Ziffernblatt -->
+        <Ellipse Stroke="Black" StrokeThickness="4" />
+
+        <!-- Stundenzeiger -->
+        <Line x:Name="hourHand" Stroke="Black" StrokeThickness="4"
+              X1="200" Y1="200" X2="200" Y2="120" StrokeStartLineCap="Round"/>
+
+        <!-- Minutenzeiger -->
+        <Line x:Name="minuteHand" Stroke="Black" StrokeThickness="3"
+              X1="200" Y1="200" X2="200" Y2="80" StrokeStartLineCap="Round"/>
+
+        <!-- Sekundenzeiger -->
+        <Line x:Name="secondHand" Stroke="Red" StrokeThickness="1"
+              X1="200" Y1="200" X2="200" Y2="60" StrokeStartLineCap="Round"/>
+    </Grid>
+</UserControl>

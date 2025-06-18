@@ -1,0 +1,53 @@
+﻿<Window 
+    x:Class="Gemelo.Applications.Tournify.Clock.Windows.WebWindow"
+    xmlns:Wpf="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"  
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:local="clr-namespace:Gemelo.Applications.Tournify.Clock.Windows"
+    mc:Ignorable="d"
+    WindowState="Maximized"
+    Title="Tournify" Height="1920" Width="1080">
+    <Window.Resources>
+        <Style TargetType="Button">
+            <Setter Property="Padding" Value="100,0"/>
+            <Setter Property="Margin" Value="20,10"/>
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="Background" Value="#eee"/>
+            <Setter Property="BorderBrush" Value="DarkGreen"/>
+            <Setter Property="BorderThickness" Value="2"/>
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="100"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <StackPanel
+            HorizontalAlignment="Left"
+            Grid.Row="0"
+            Orientation="Horizontal">
+
+            <Button
+            Click="ButtonOpenWeb_Click"
+            Content="Browser"
+            />
+
+            <Button
+            Click="ButtonRead_Click"
+            Content="Auslesen"
+            />
+
+        </StackPanel>
+
+
+        <Wpf:WebView2 
+            Grid.Row="1"
+            x:Name="m_Web"/>
+    </Grid>
+
+</Window>
+    
+    

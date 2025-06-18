@@ -10,7 +10,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Code\Models\" />
+    <Page Remove="Code\Apps\App.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ApplicationDefinition Include="Code\Apps\App.xaml" />
   </ItemGroup>
 
   <ItemGroup>

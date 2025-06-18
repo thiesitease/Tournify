@@ -1,0 +1,108 @@
+﻿<Window 
+    xmlns:Common="clr-namespace:Gemelo.Applications.Tournify.Clock.Controls.Common"  
+    x:Class="Gemelo.Applications.Tournify.Clock.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    WindowState="Maximized"
+    Title="gemelo's Tournify Clock" Height="1080" Width="1920">
+
+    <Window.Resources>
+        <Style
+            TargetType="TextBlock">
+            <Setter Property="FontSize" Value="20"/>
+        </Style>
+    </Window.Resources>
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="300"/>
+            <RowDefinition/>
+            <RowDefinition Height="500"/>
+        </Grid.RowDefinitions>
+
+        <!--<Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>-->
+
+        <StackPanel
+            Orientation="Horizontal">
+
+
+            <Viewbox
+            Margin="20"
+            HorizontalAlignment="Left"
+            >
+                <Common:AnalogClock
+            />
+
+            </Viewbox>
+
+            <StackPanel
+            VerticalAlignment="Center">
+
+                <TextBlock
+                    FontSize="40"
+                    HorizontalAlignment="Center">
+aktuelle Uhrzeit
+                </TextBlock>
+
+                <Common:DigitalClock 
+                FontSize="80"
+                ShowCurrentTime="True"
+                HorizontalAlignment="Center"
+                x:Name="m_DigitalClock1"
+                />
+                <Common:DigitalClock 
+                HorizontalAlignment="Center"
+                FontSize="40"
+                x:Name="m_DigitalClock2"
+                />
+            </StackPanel>
+
+        </StackPanel>
+
+        <StackPanel
+            Margin="20"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Center">
+
+            <TextBlock
+                FontSize="40"
+                HorizontalAlignment="Center">
+                verbleibende Spielzeit
+            </TextBlock>
+
+            <Common:DigitalClock 
+                FontSize="80"
+                ShowCurrentTime="False"
+                HorizontalAlignment="Center"
+                x:Name="m_DigitalClockRemainingPlay"
+                />
+
+            <TextBlock
+                FontSize="30"
+                HorizontalAlignment="Center">
+                verbleibende Pause
+            </TextBlock>
+
+            <Common:DigitalClock 
+                FontSize="60"
+                ShowCurrentTime="False"
+                HorizontalAlignment="Center"
+                x:Name="m_DigitalClockRemainingBreak"
+                />
+
+
+        </StackPanel>
+
+
+
+    </Grid>
+</Window>
