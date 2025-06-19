@@ -1,6 +1,8 @@
 ﻿using Gemelo.Applications.Tournify.Clock.Apps;
 using Gemelo.Applications.Tournify.Clock.Properties;
 
+using Microsoft.Web.WebView2.WinForms;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -30,7 +32,7 @@ public partial class WebWindow : Window
         InitializeComponent();
         Loaded += WebWindow_Loaded;
 
-        m_Timer=new DispatcherTimer();
+        m_Timer = new DispatcherTimer();
         m_Timer.Tick += Timer_Tick;
         m_Timer.Interval = TimeSpan.FromSeconds(1);
         m_Timer.Start();
@@ -38,7 +40,14 @@ public partial class WebWindow : Window
 
     private void WebWindow_Loaded(object sender, RoutedEventArgs e)
     {
-        _ = Open();
+        _ = PreparewebView();
+        //_ = Open();
+    }
+
+    private async Task PreparewebView()
+    {
+        await m_Web.EnsureCoreWebView2Async();
+        await Open();
     }
 
     #region EventHandler
@@ -96,6 +105,6 @@ public partial class WebWindow : Window
 
     private void Timer_Tick(object? sender, EventArgs e)
     {
-        _=Parse();
+        _ = Parse();
     }
 }
