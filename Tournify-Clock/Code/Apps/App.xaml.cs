@@ -16,10 +16,12 @@ namespace Gemelo.Applications.Tournify.Clock.Apps
     /// </summary>
     public partial class App : Application
     {
+        public const bool UseFaketime = false;
+
 #if (DEBUG)
 
-        public readonly DateTime FakeNow = new DateTime(2025, 06, 21, 09, 10, 00);
-        public readonly double FakeTimeFactor =25.0;
+        public readonly DateTime FakeNow = UseFaketime ? new DateTime(2025, 06, 21, 09, 10, 00) : DateTime.Now;
+        public readonly double FakeTimeFactor = UseFaketime ? 25.0 : 1.0;
 
 
 #endif
@@ -41,9 +43,10 @@ namespace Gemelo.Applications.Tournify.Clock.Apps
             get
             {
 #if(DEBUG)
-                return FakeNow + FakeTimeFactor * Elapsed.Elapsed;
-
-                return DateTime.Now;
+                if (UseFaketime)
+                    return FakeNow + FakeTimeFactor * Elapsed.Elapsed;
+                else
+                    return DateTime.Now;
 #else
                 return DateTime.Now;
 #endif
@@ -72,16 +75,16 @@ namespace Gemelo.Applications.Tournify.Clock.Apps
 #else
             Connector = new TournifyConnector(new Uri(Settings.Default.TournifyUrl));
             MatchDuration = Settings.Default.MatchDuration;
-            MatchPrepareBeforeEnd = TimeSpan.FromMinutes(15);
+            MatchPrepareBeforeNextStart = TimeSpan.FromMinutes(15);
 #endif
 
             SpeechSynthesizer = new SpeechSynthesizer();
 
-            var voices=SpeechSynthesizer.GetInstalledVoices();
-           foreach(var voice in voices) 
+            var voices = SpeechSynthesizer.GetInstalledVoices();
+            foreach (var voice in voices)
             {
                 Debug.WriteLine(voice.ToString());
-            
+
             }
             SpeechSynthesizer.SelectVoice(voices[0].VoiceInfo.Name);
             //SpeechSynthesizer.SelectVoiceByHints(VoiceGender.Female, VoiceAge.Senior);
