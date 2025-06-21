@@ -1,4 +1,5 @@
-﻿using Gemelo.Applications.Tournify.Clock.Code.Connectors;
+﻿using Gemelo.Applications.Tournify.Clock.Code.Audios;
+using Gemelo.Applications.Tournify.Clock.Code.Connectors;
 using Gemelo.Applications.Tournify.Clock.Properties;
 using Gemelo.Applications.Tournify.Clock.Windows;
 
@@ -16,12 +17,12 @@ namespace Gemelo.Applications.Tournify.Clock.Apps
     /// </summary>
     public partial class App : Application
     {
-        public const bool UseFaketime = false;
+        public const bool UseFaketime = true;
 
 #if (DEBUG)
 
-        public readonly DateTime FakeNow = UseFaketime ? new DateTime(2025, 06, 21, 09, 10, 00) : DateTime.Now;
-        public readonly double FakeTimeFactor = UseFaketime ? 25.0 : 1.0;
+        public readonly DateTime FakeNowStartTime = UseFaketime ? new DateTime(2025, 06, 21, 16, 50, 00) : DateTime.Now;
+        public readonly double FakeTimeFactor = UseFaketime ? 20.0 : 1.0;
 
 
 #endif
@@ -35,7 +36,6 @@ namespace Gemelo.Applications.Tournify.Clock.Apps
         public TimeSpan MatchDuration { get; private set; }
         public TimeSpan MatchPrepareBeforeNextStart { get; private set; }
 
-        public SpeechSynthesizer SpeechSynthesizer { get; }
 
 
         public DateTime Now
@@ -44,7 +44,7 @@ namespace Gemelo.Applications.Tournify.Clock.Apps
             {
 #if(DEBUG)
                 if (UseFaketime)
-                    return FakeNow + FakeTimeFactor * Elapsed.Elapsed;
+                    return FakeNowStartTime + FakeTimeFactor * Elapsed.Elapsed;
                 else
                     return DateTime.Now;
 #else
@@ -78,19 +78,6 @@ namespace Gemelo.Applications.Tournify.Clock.Apps
             MatchPrepareBeforeNextStart = TimeSpan.FromMinutes(15);
 #endif
 
-            SpeechSynthesizer = new SpeechSynthesizer();
-
-            var voices = SpeechSynthesizer.GetInstalledVoices();
-            foreach (var voice in voices)
-            {
-                Debug.WriteLine(voice.ToString());
-
-            }
-            SpeechSynthesizer.SelectVoice(voices[0].VoiceInfo.Name);
-            //SpeechSynthesizer.SelectVoiceByHints(VoiceGender.Female, VoiceAge.Senior);
-            SpeechSynthesizer.SetOutputToDefaultAudioDevice();
-
-            SpeechSynthesizer.Speak("Willkommen beim Kiwi Cup");
         }
 
         protected override void OnStartup(StartupEventArgs e)
@@ -102,6 +89,8 @@ namespace Gemelo.Applications.Tournify.Clock.Apps
 
             WebWindow = new WebWindow();
             WebWindow.Show();
+
+            AudioController.Default.InitAndWelcome();
 
         }
     }

@@ -10,6 +10,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Data\Sounds\Abpiff.wav" />
+    <None Remove="Data\Sounds\Anpfiff2.wav" />
+    <None Remove="Data\Sounds\nur noch eine Minute zu spielen.wav" />
+    <None Remove="Data\Sounds\Nächstes Spiel in einer Minute.wav" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Page Remove="Code\Apps\App.xaml" />
   </ItemGroup>
 
@@ -18,10 +25,26 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Data\Sounds\Abpiff.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\Sounds\Anpfiff2.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\Sounds\nur noch eine Minute zu spielen.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\Sounds\Nächstes Spiel in einer Minute.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Google.Cloud.Firestore" Version="3.10.0" />
     <PackageReference Include="HtmlAgilityPack" Version="1.12.1" />
     <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="6.0.0" />
     <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3296.44" />
+    <PackageReference Include="NAudio" Version="2.2.1" />
     <PackageReference Include="System.Speech" Version="9.0.6" />
   </ItemGroup>
 
@@ -38,6 +61,15 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Code\NewFolder\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\gemelo\Components\gemelo.Common\gemelo.Common.Wpf\gemelo.Common.Wpf.csproj" />
+    <ProjectReference Include="..\..\..\gemelo\Components\gemelo.Common\gemelo.Common\gemelo.Common.csproj" />
   </ItemGroup>
 
 </Project>

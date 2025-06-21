@@ -1,5 +1,7 @@
 ﻿using Gemelo.Applications.Tournify.Clock.Apps;
+using Gemelo.Applications.Tournify.Clock.Code.Audios;
 using Gemelo.Applications.Tournify.Clock.Code.Connectors;
+using Gemelo.Applications.Tournify.Clock.Code.Enumerations;
 using Gemelo.Applications.Tournify.Clock.Code.Models;
 using Gemelo.Applications.Tournify.Clock.Properties;
 
@@ -78,25 +80,33 @@ namespace Gemelo.Applications.Tournify.Clock
 
             if (m_MatchesDisplayReadyToPrepare.Matches != null && m_MatchesDisplayReadyToPrepare.Matches.Count == 0 && prepare.Count > 0)
             {
-                if (prepare.Count == 1)
+                _ = ShowWarning();
+                if (AudioController.Default.UseKitOutput)
                 {
-                    _ = App.Current.SpeechSynthesizer.SpeakAsync($"Es machen sich bitte bereit die Mannschaften {prepare[0].Team1} gegen {prepare[0].Team2} auf dem {prepare[0].FieldName} gepfiffen von {prepare[0].MatchReferee.Replace("&amp;", "und")}.");
+                    if (prepare.Count == 1)
+                    {
+                        AudioController.Default.Speak(AudioOutputcontent.FreeText, $"Es machen sich bitte bereit die Mannschaften {prepare[0].Team1} gegen {prepare[0].Team2} auf dem {prepare[0].FieldName} gepfiffen von {prepare[0].MatchReferee.Replace("&amp;", "und")}.");
+                    }
+                    else if (prepare.Count >= 2)
+                    {
+                        AudioController.Default.Speak(AudioOutputcontent.FreeText, $"Die KIWI KI übernimmt die Macht! Ha ha ha! Es machen sich bitte bereit die Mannschaften {prepare[0].Team1} gegen {prepare[0].Team2} auf dem {prepare[0].FieldName} gepfiffen von {prepare[0].MatchReferee.Replace("&amp;", "und")} und die Mannschaften {prepare[1].Team1} gegen {prepare[1].Team2} auf dem {prepare[1].FieldName} gepfiffen von {prepare[1].MatchReferee.Replace("&amp;", "und")}.");
+                    }
                 }
-                else if (prepare.Count >= 2)
+                else
                 {
-                    _ = App.Current.SpeechSynthesizer.SpeakAsync($"Es machen sich bitte bereit die Mannschaften {prepare[0].Team1} gegen {prepare[0].Team2} auf dem {prepare[0].FieldName} gepfiffen von {prepare[0].MatchReferee.Replace("&amp;", "und")} und die Mannschaften {prepare[1].Team1} gegen {prepare[1].Team2} auf dem {prepare[1].FieldName} gepfiffen von {prepare[1].MatchReferee.Replace("&amp;", "und")}.");
                 }
             }
 
             if (m_MatchesDisplayCurrent.Matches != null && m_MatchesDisplayCurrent.Matches.Count == 0 && current.Count >= 2)
             {
-                _ = App.Current.SpeechSynthesizer.SpeakAsync($"Anpfiff!");
+                _ = ShowWarning();
+                AudioController.Default.Speak(AudioOutputcontent.Anpfiff);
             }
             if (m_MatchesDisplayCurrent.Matches != null && m_MatchesDisplayCurrent.Matches.Count > 0 && current.Count == 0)
             {
-                _ = App.Current.SpeechSynthesizer.SpeakAsync($"Abpfiff!");
+                _ = ShowWarning();
+                AudioController.Default.Speak(AudioOutputcontent.Abpfiff);
             }
-
 
             m_MatchesDisplayCurrent.Matches = current;
             m_MatchesDisplayReadyToPrepare.Matches = prepare;
@@ -107,6 +117,26 @@ namespace Gemelo.Applications.Tournify.Clock
             m_DigitalClockRemainingPlay.Matches = current;
             if (current.Count == 0) m_DigitalClockRemainingBreak.Matches = prepare;
             else m_DigitalClockRemainingBreak.Matches = null;
+        }
+
+        private async Task ShowWarning()
+        {
+            this.Background = Brushes.Red;
+            await Task.Delay(500);
+            this.Background = Brushes.White;
+            await Task.Delay(500);
+            this.Background = Brushes.Red;
+            await Task.Delay(500);
+            this.Background = Brushes.White;
+            await Task.Delay(500);
+            this.Background = Brushes.Red;
+            await Task.Delay(500);
+            this.Background = Brushes.White;
+            await Task.Delay(500);
+            this.Background = Brushes.Red;
+            await Task.Delay(500);
+            this.Background = Brushes.White;
+            await Task.Delay(500);
         }
 
         /// <summary>
@@ -151,5 +181,10 @@ namespace Gemelo.Applications.Tournify.Clock
 
         #endregion EventHandler
 
+
+        private void CbCheckKiOutout_Checked(object sender, RoutedEventArgs e)
+        {
+            AudioController.Default.UseKitOutput = m_CbCheckKiOutout.IsChecked.Value;
+        }
     }
 }

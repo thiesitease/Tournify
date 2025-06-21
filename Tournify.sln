@@ -5,6 +5,10 @@ VisualStudioVersion = 17.13.35931.197
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TournifyClock", "Tournify-Clock\TournifyClock.csproj", "{CC2802E4-30A2-4603-AF08-E486945523AC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gemelo.Common", "..\..\gemelo\Components\gemelo.Common\gemelo.Common\gemelo.Common.csproj", "{4FEE676A-04E9-37F9-FDE6-35FD77110657}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gemelo.Common.Wpf", "..\..\gemelo\Components\gemelo.Common\gemelo.Common.Wpf\gemelo.Common.Wpf.csproj", "{2CB37417-9A91-AF06-3E59-F304D0243E24}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{CC2802E4-30A2-4603-AF08-E486945523AC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CC2802E4-30A2-4603-AF08-E486945523AC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CC2802E4-30A2-4603-AF08-E486945523AC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4FEE676A-04E9-37F9-FDE6-35FD77110657}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4FEE676A-04E9-37F9-FDE6-35FD77110657}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4FEE676A-04E9-37F9-FDE6-35FD77110657}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4FEE676A-04E9-37F9-FDE6-35FD77110657}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2CB37417-9A91-AF06-3E59-F304D0243E24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2CB37417-9A91-AF06-3E59-F304D0243E24}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2CB37417-9A91-AF06-3E59-F304D0243E24}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2CB37417-9A91-AF06-3E59-F304D0243E24}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

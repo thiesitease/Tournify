@@ -1,10 +1,13 @@
 ﻿using Gemelo.Applications.Tournify.Clock.Apps;
+using Gemelo.Applications.Tournify.Clock.Code.Audios;
+using Gemelo.Applications.Tournify.Clock.Code.Enumerations;
 using Gemelo.Applications.Tournify.Clock.Code.Models;
 
 using Grpc.Net.Client.Balancer;
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,11 +34,18 @@ public partial class DigitalClock : UserControl
     public bool IsRemainingPlayingClock { get; set; }
     public bool IsRemainingBreakClock { get; set; }
 
+    public bool IsTimeFromTournify { get; set; }
+
     public TimeSpan Time
     {
         get { return m_Time; }
         set
         {
+            //if(IsTimeFromTournify)
+            //{
+            //    Debugger.Break();
+            //}
+
             if (value != m_Time)
             {
                 m_Time = value;
@@ -106,6 +116,10 @@ public partial class DigitalClock : UserControl
         {
             Time = App.Current.Now.TimeOfDay;
         }
+        else if (IsTimeFromTournify)
+        {
+            // nix machen
+        }
         else if (Matches?.Count > 0)
         {
             FontSize = 80;
@@ -122,7 +136,7 @@ public partial class DigitalClock : UserControl
                     if (!m_HasSpoken)
                     {
                         m_HasSpoken = true;
-                        App.Current.SpeechSynthesizer.SpeakAsync("Noch eine Minute zu Spielen!");
+                        AudioController.Default.Speak(AudioOutputcontent.OneMinuteTooPlay);
                     }
                 }
                 else
@@ -139,7 +153,7 @@ public partial class DigitalClock : UserControl
                     if (!m_HasSpoken)
                     {
                         m_HasSpoken = true;
-                        App.Current.SpeechSynthesizer.SpeakAsync("Noch eine Minute bis zum Start!");
+                        AudioController.Default.Speak(AudioOutputcontent.OneMinuteToStart);
                     }
                 }
                 else
@@ -149,7 +163,7 @@ public partial class DigitalClock : UserControl
             }
             else
             {
-                remaining = DateTime.Now;
+                remaining = App.Current.Now;
             }
             Time = remaining.TimeOfDay;
         }

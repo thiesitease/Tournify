@@ -39,6 +39,16 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>-->
 
+        <CheckBox
+            x:Name="m_CbCheckKiOutout"
+            Checked="CbCheckKiOutout_Checked"
+            Unchecked="CbCheckKiOutout_Checked"
+            VerticalAlignment="Center"
+            FontSize="30"
+            HorizontalAlignment="Center">
+            KI Stimme
+        </CheckBox>
+
         <StackPanel
             Orientation="Horizontal">
 
@@ -68,6 +78,7 @@ aktuelle Uhrzeit
                 x:Name="m_DigitalClock1"
                 />
                 <Common:DigitalClock 
+                    IsTimeFromTournify="True"
                 HorizontalAlignment="Center"
                 FontSize="40"
                 x:Name="m_DigitalClock2"

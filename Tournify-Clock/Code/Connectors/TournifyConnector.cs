@@ -8,9 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using System;
-using System.Net.Http;
 using System.Threading.Tasks;
-using HtmlAgilityPack;
 using System.Diagnostics;
 using Gemelo.Applications.Tournify.Clock.Properties;
 using Gemelo.Applications.Tournify.Clock.Code.Models;
@@ -87,6 +85,7 @@ public class TournifyConnector
         catch (Exception ex)
         {
             Debugger.Break();
+            Trace.WriteLine(ex.Message);
         }
     }
 
