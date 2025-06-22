@@ -19,7 +19,6 @@ public class AudioController
 
     private SpeechSynthesizer m_SpeechSynthesizer;
 
-
     public AudioController()
     {
         m_DictCachedSounds = new Dictionary<SoundIds, CachedSound>();
@@ -49,16 +48,13 @@ public class AudioController
         }
     }
 
-    public bool UseKitOutput { get; set; }
+    //public bool UseKitOutput { get; set; }
 
     public void Speak(AudioOutputcontent outputcontent, string text = null)
     {
         if (outputcontent == AudioOutputcontent.FreeText)
         {
-            if (UseKitOutput)
-            {
-                SpeakAsync(text);
-            }
+            SpeakAsync(text);
         }
         else
         {

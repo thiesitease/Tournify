@@ -78,10 +78,12 @@ namespace Gemelo.Applications.Tournify.Clock
                 else if (IsUpcomingMatch(match) && upcoming.Count < Settings.Default.DisplayNextMatchesCount) upcoming.Add(match);
             }
 
-            if (m_MatchesDisplayReadyToPrepare.Matches != null && m_MatchesDisplayReadyToPrepare.Matches.Count == 0 && prepare.Count > 0)
+            if (m_MatchesDisplayReadyToPrepare.Matches != null && 
+                m_MatchesDisplayReadyToPrepare.Matches.Count == 0 && 
+                prepare.Count > 0)
             {
                 _ = ShowWarning();
-                if (AudioController.Default.UseKitOutput)
+                if (m_CbCheckKiOutout.IsChecked == true)
                 {
                     if (prepare.Count == 1)
                     {
@@ -184,7 +186,7 @@ namespace Gemelo.Applications.Tournify.Clock
 
         private void CbCheckKiOutout_Checked(object sender, RoutedEventArgs e)
         {
-            AudioController.Default.UseKitOutput = m_CbCheckKiOutout.IsChecked.Value;
+            //AudioController.Default.UseKitOutput = m_CbCheckKiOutout.IsChecked.Value;
         }
     }
 }
