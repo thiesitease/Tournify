@@ -30,7 +30,7 @@
             <ColumnDefinition Width="0.3*"/>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="0.4*"/>
+            <ColumnDefinition Width="0.6*"/>
             <ColumnDefinition Width="0.5*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
@@ -58,9 +58,11 @@
             Grid.Column="3"/>
         <TextBlock
             x:Name="m_TxtPool"
+            FontSize="20"
             Grid.Column="4"/>
         <TextBlock
             x:Name="m_TxtField"
+            FontSize="20"
             Grid.Column="5"/>
         <TextBlock
             FontSize="25"
