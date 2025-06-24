@@ -9,6 +9,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gemelo.Common", "..\..\geme
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gemelo.Common.Wpf", "..\..\gemelo\Components\gemelo.Common\gemelo.Common.Wpf\gemelo.Common.Wpf.csproj", "{2CB37417-9A91-AF06-3E59-F304D0243E24}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libs", "Libs", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{2CAD6CA8-2833-4A79-937A-D2573C78F43E}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,6 +37,10 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{4FEE676A-04E9-37F9-FDE6-35FD77110657} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{2CB37417-9A91-AF06-3E59-F304D0243E24} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6C674E20-C1D7-463F-AEB5-B7A7B8452749}

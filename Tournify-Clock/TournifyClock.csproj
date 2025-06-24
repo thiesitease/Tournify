@@ -10,6 +10,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Code\NewFolder\**" />
+    <EmbeddedResource Remove="Code\NewFolder\**" />
+    <None Remove="Code\NewFolder\**" />
+    <Page Remove="Code\NewFolder\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Data\Sounds\Abpiff.wav" />
     <None Remove="Data\Sounds\Anpfiff2.wav" />
     <None Remove="Data\Sounds\nur noch eine Minute zu spielen.wav" />
@@ -64,7 +71,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Code\NewFolder\" />
+    <Folder Include="Code\Common\" />
   </ItemGroup>
 
   <ItemGroup>
