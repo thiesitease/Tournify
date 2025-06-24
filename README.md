@@ -24,3 +24,9 @@ Verweist die URL, wo sich der
 ```
 die Daten zu direkt folgenden Spiele abholt
 
+## Screenshots
+
+![Alt-Text](/Screenshots/Screenshot 01.png)
+
+<img src="/Screenshots/Screenshot 01.png" alt="Screenshot 01" title="mit Warnung" />
+<img src="/Screenshots/Screenshot 02.png" alt="Screenshot 01" title="kommende Spiele" />

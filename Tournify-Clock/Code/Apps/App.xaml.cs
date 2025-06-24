@@ -21,7 +21,7 @@ namespace Gemelo.Applications.Tournify.Clock.Apps
 
 #if (DEBUG)
 
-        public readonly DateTime FakeNowStartTime = UseFaketime ? new DateTime(2025, 06, 22, 10, 10, 00) : DateTime.Now;
+        public readonly DateTime FakeNowStartTime = UseFaketime ? new DateTime(2025, 06, 22, 19, 30, 00) : DateTime.Now;
         public readonly double FakeTimeFactor = UseFaketime ? 20.0 : 1.0;
 
 
@@ -64,14 +64,19 @@ namespace Gemelo.Applications.Tournify.Clock.Apps
             Current = this;
             Elapsed.Start();
 #if (DEBUG)
-            //string demoUrl = "https://www.tournify.de/live/develop-test/present";
-            //Connector = new TournifyConnector(new Uri(demoUrl));
-            //MatchDuration = TimeSpan.FromMinutes(2);
-            //MatchPrepareBeforeEnd = TimeSpan.FromMinutes(6);
-
-            Connector = new TournifyConnector(new Uri(Settings.Default.TournifyUrl));
-            MatchDuration = Settings.Default.MatchDuration;
-            MatchPrepareBeforeNextStart = TimeSpan.FromMinutes(15);
+            if (true)
+            {
+                string demoUrl = "https://www.tournify.de/live/develop-test/present";
+                Connector = new TournifyConnector(new Uri(demoUrl));
+                MatchDuration = TimeSpan.FromMinutes(2);
+                MatchPrepareBeforeNextStart = TimeSpan.FromMinutes(6);
+            }
+            else
+            {
+                Connector = new TournifyConnector(new Uri(Settings.Default.TournifyUrl));
+                MatchDuration = Settings.Default.MatchDuration;
+                MatchPrepareBeforeNextStart = TimeSpan.FromMinutes(15);
+            }
 #else
             Connector = new TournifyConnector(new Uri(Settings.Default.TournifyUrl));
             MatchDuration = Settings.Default.MatchDuration;
