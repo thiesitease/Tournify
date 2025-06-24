@@ -7,7 +7,9 @@
 
 Diese aktuellen/demnächst anstehenden Partien werden übersichtlich dargestellt, so dass eine einfach Ankündigung durch die Turnierleitung erfolgen kann.
 
-Außerdem ist es möglich, den Anpiff/Abpfiff und diverse Ankündigungen ("noch eine Minute zu spielen", "noch eine Minute bis zum nächsten Spiel" und "Um 10:30 Uhr spielt Team A gegen Team auf dem Platz X.") automatisiert ausgeben zu lassne.
+Außerdem ist es möglich, den Anpiff/Abpfiff und diverse Ankündigungen ("noch eine Minute zu spielen", "noch eine Minute bis zum nächsten Spiel" und "Um 10:30 Uhr spielt Team A gegen Team auf dem Platz X.") automatisiert ausgeben zu lassen.
+
+Außerdem werden diverse Uhren, Spielzeiten und Pausenzeiten dargestellt.
 
 ## Konfiguration
 ```
