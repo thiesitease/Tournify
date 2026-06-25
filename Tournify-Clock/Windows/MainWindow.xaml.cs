@@ -64,6 +64,8 @@ namespace Gemelo.Applications.Tournify.Clock
             AnalyseMatches();
         }
 
+        private bool _HasSpoken_ShortlyPlaying;
+
         private void AnalyseMatches()
         {
             var allMatchesSorted = App.Current.Connector.TournifyModel.MatchModels.OrderBy(x => x.StartTime);
@@ -71,11 +73,14 @@ namespace Gemelo.Applications.Tournify.Clock
             List<MatchModel> current = new List<MatchModel>();
             List<MatchModel> prepare = new List<MatchModel>();
             List<MatchModel> upcoming = new List<MatchModel>();
+            List<MatchModel> shortlyPlaying = new List<MatchModel>();
             foreach (var match in allMatchesSorted)
             {
                 if (IsCurrentlyPlayingMatch(match)) current.Add(match);
                 else if (IsReadyToPrepare(match)) prepare.Add(match);
                 else if (IsUpcomingMatch(match) && upcoming.Count < Settings.Default.DisplayNextMatchesCount) upcoming.Add(match);
+
+                if (IsShortlyPlaying(match)) shortlyPlaying.Add(match);
             }
 
             if (m_MatchesDisplayReadyToPrepare.Matches != null &&
@@ -83,7 +88,8 @@ namespace Gemelo.Applications.Tournify.Clock
                 prepare.Count > 0)
             {
                 _ = ShowWarning();
-                if (m_CbCheckKiOutout.IsActive == true)
+                _HasSpoken_ShortlyPlaying = false;
+                if (m_ToggleKiOutput.IsActive == true)
                 {
                     if (prepare.Count == 1)
                     {
@@ -100,6 +106,27 @@ namespace Gemelo.Applications.Tournify.Clock
                 }
                 else
                 {
+                }
+            }
+
+            if (!_HasSpoken_ShortlyPlaying && shortlyPlaying.Count > 0)
+            {
+                _HasSpoken_ShortlyPlaying = true;
+
+                if (m_ToggleKiOutput.IsActive == true)
+                {
+                    if (prepare.Count == 1)
+                    {
+                        AudioController.Default.Speak(
+                            AudioOutputcontent.FreeText,
+                            $"Gleich spielen {prepare[0].Team1} gegen {prepare[0].Team2} || {prepare[0].FieldName} || Schiris {prepare[0].MatchReferee.Replace("&amp;", "und")}.");
+                    }
+                    else if (prepare.Count >= 2)
+                    {
+                        AudioController.Default.Speak(
+                            AudioOutputcontent.FreeText,
+                            $"Gleich spielen {prepare[0].Team1} gegen {prepare[0].Team2} || {prepare[0].FieldName}, || Schiris {prepare[0].MatchReferee?.Replace("&amp;", "und")}. || Und {prepare[1].Team1} gegen {prepare[1].Team2} || {prepare[1].FieldName}, || Schiris {prepare[1].MatchReferee?.Replace("&amp;", "und")}.");
+                    }
                 }
             }
 
@@ -175,6 +202,22 @@ namespace Gemelo.Applications.Tournify.Clock
 
         }
 
+
+        /// <summary>
+        /// Spiele, die kurz bevor stehen
+        /// </summary>
+        /// <param name="match"></param>
+        /// <returns></returns>
+        private bool IsShortlyPlaying(MatchModel match)
+        {
+            DateTime now = App.Current.Now;
+
+            return now > (match.StartTime - App.Current.MatchGleichSpielenShortReminder) && now < match.StartTime;
+
+        }
+
+
+
         private bool IsUpcomingMatch(MatchModel match)
         {
             DateTime now = App.Current.Now;
@@ -229,7 +272,8 @@ namespace Gemelo.Applications.Tournify.Clock
 
         private void BtnSelectVoice_Click(object sender, RoutedEventArgs e)
         {
-
+            var dialog = new VoiceSelectionWindow { Owner = this };
+            dialog.ShowDialog();
         }
     }
 }

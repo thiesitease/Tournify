@@ -94,6 +94,34 @@ public class AudioController
     /// <summary>Löscht den Cache der synthetisierten Sprach-WAVs. Gibt die Anzahl gelöschter Dateien zurück.</summary>
     public int ClearSpeechCache() => m_SpeechService.ClearCache();
 
+    /// <summary>Zugriff auf den Sprachdienst (z.B. für den Stimmen-Auswahldialog).</summary>
+    public SpeechService SpeechService => m_SpeechService;
+
+    /// <summary>
+    /// Spricht <paramref name="text"/> einmalig mit der angegebenen Stimme und Tempo – für die
+    /// Hörprobe im Auswahldialog, unabhängig von den aktuell gespeicherten Werten.
+    /// </summary>
+    public async Task SpeakTestAsync(string text, string voice, string? rate = null)
+    {
+        if (string.IsNullOrWhiteSpace(text)) return;
+
+        try
+        {
+            string? wavPath = await m_SpeechService.GetWavPathAsync(text, voice, rate);
+            if (wavPath != null)
+            {
+                AudioPlaybackEngine.Default.PlaySound(wavPath);
+                return;
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"[AudioController] Test-Sprachausgabe fehlgeschlagen: {ex.Message}");
+        }
+
+        SpeakViaSapi(text);
+    }
+
     //public bool UseKitOutput { get; set; }
 
     public void Speak(AudioOutputcontent outputcontent, string text = null)

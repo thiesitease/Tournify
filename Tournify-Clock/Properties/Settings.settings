@@ -29,5 +29,16 @@
     <Setting Name="AzureSpeechBreakMs" Type="System.Int32" Scope="Application">
       <Value Profile="(Default)">350</Value>
     </Setting>
+    <Setting Name="AzureSpeechFavoriteVoices" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">de-DE-GiselaNeural,de-DE-FlorianMultilingualNeural,de-DE-SeraphinaMultilingualNeural,de-DE-KatjaNeural,de-DE-MajaNeural
+
+</Value>
+    </Setting>
+    <Setting Name="SelectedVoice" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="SelectedRate" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>

@@ -35,6 +35,7 @@ namespace Gemelo.Applications.Tournify.Clock.Apps
 
         public TimeSpan MatchDuration { get; private set; }
         public TimeSpan MatchPrepareBeforeNextStart { get; private set; }
+        public TimeSpan MatchGleichSpielenShortReminder { get; private set; }
 
 
 
@@ -69,11 +70,12 @@ namespace Gemelo.Applications.Tournify.Clock.Apps
                 //string demoUrl = "https://www.tournify.de/live/develop-test/present";
                 //MatchDuration = TimeSpan.FromMinutes(2);
                 //MatchPrepareBeforeNextStart = TimeSpan.FromMinutes(6);
-                
+
                 string demoUrl = Settings.Default.TournifyUrl;
                 MatchDuration = Settings.Default.MatchDuration;
                 MatchPrepareBeforeNextStart = TimeSpan.FromMinutes(15);
-                
+                MatchGleichSpielenShortReminder = TimeSpan.FromMinutes(2);
+
                 Connector = new TournifyConnector(new Uri(demoUrl));
             }
             else
@@ -81,11 +83,13 @@ namespace Gemelo.Applications.Tournify.Clock.Apps
                 Connector = new TournifyConnector(new Uri(Settings.Default.TournifyUrl));
                 MatchDuration = Settings.Default.MatchDuration;
                 MatchPrepareBeforeNextStart = TimeSpan.FromMinutes(15);
+                MatchGleichSpielenShortReminder = TimeSpan.FromMinutes(2);
             }
 #else
             Connector = new TournifyConnector(new Uri(Settings.Default.TournifyUrl));
             MatchDuration = Settings.Default.MatchDuration;
             MatchPrepareBeforeNextStart = TimeSpan.FromMinutes(15);
+                MatchGleichSpielenShortReminder = TimeSpan.FromMinutes(2);
 #endif
 
         }
@@ -95,10 +99,11 @@ namespace Gemelo.Applications.Tournify.Clock.Apps
             base.OnStartup(e);
 
             MainWindow = new MainWindow();
-            MainWindow.Show();
 
             WebWindow = new WebWindow();
             WebWindow.Show();
+
+            MainWindow.Show();
 
             AudioController.Default.InitAndWelcome();
 

@@ -103,5 +103,39 @@ namespace Gemelo.Applications.Tournify.Clock.Properties {
                 return ((int)(this["AzureSpeechBreakMs"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("de-DE-GiselaNeural,de-DE-FlorianMultilingualNeural,de-DE-SeraphinaMultilingualNeu" +
+            "ral,de-DE-KatjaNeural,de-DE-MajaNeural\r\n\r\n")]
+        public string AzureSpeechFavoriteVoices {
+            get {
+                return ((string)(this["AzureSpeechFavoriteVoices"]));
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string SelectedVoice {
+            get {
+                return ((string)(this["SelectedVoice"]));
+            }
+            set {
+                this["SelectedVoice"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string SelectedRate {
+            get {
+                return ((string)(this["SelectedRate"]));
+            }
+            set {
+                this["SelectedRate"] = value;
+            }
+        }
     }
 }

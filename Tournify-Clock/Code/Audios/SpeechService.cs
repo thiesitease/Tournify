@@ -3,8 +3,10 @@ using Gemelo.Components.Common.Settings;
 using Microsoft.CognitiveServices.Speech;
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,11 +24,15 @@ namespace Gemelo.Applications.Tournify.Clock.Code.Audios;
 /// Konfiguration:
 ///   - Key:    Umgebungsvariable AZURE_SPEECH_KEY (Pflicht; Geheimnis, nicht ins Git)
 ///   - Region: Umgebungsvariable AZURE_SPEECH_REGION oder Setting AzureSpeechRegion
-///   - Stimme: Umgebungsvariable AZURE_SPEECH_VOICE oder Setting AzureSpeechVoice
+///   - Stimme: per Auswahldialog (Setting SelectedVoice), sonst AZURE_SPEECH_VOICE oder AzureSpeechVoice
 ///   - Tempo:  Umgebungsvariable AZURE_SPEECH_RATE oder Setting AzureSpeechRate (z.B. "-10%")
 ///   - Pause:  Umgebungsvariable AZURE_SPEECH_BREAK_MS oder Setting AzureSpeechBreakMs (ms)
 ///
 /// Im Text setzt der Marker "||" eine Sprechpause (Länge = AzureSpeechBreakMs).
+///
+/// Stimme, Tempo und Pause werden bei JEDER Synthese frisch gelesen – eine im
+/// Dialog gespeicherte Auswahl wirkt also sofort (kein Neustart nötig) und bleibt
+/// dank User-Setting auch nach einem Neustart erhalten.
 ///
 /// Ist kein Key gesetzt, ist <see cref="IsConfigured"/> false und der
 /// <see cref="AudioController"/> fällt auf System.Speech zurück.
@@ -35,9 +41,6 @@ public class SpeechService
 {
     private readonly string m_Key;
     private readonly string m_Region;
-    private readonly string m_Voice;
-    private readonly string m_Rate;
-    private readonly int m_BreakMs;
     private readonly DirectoryInfo m_CacheDir;
 
     public SpeechService()
@@ -49,31 +52,8 @@ public class SpeechService
             AppSettings.Default.AzureSpeechRegion,
             "westeurope");
 
-        m_Voice = FirstNonEmpty(
-            Environment.GetEnvironmentVariable("AZURE_SPEECH_VOICE"),
-            AppSettings.Default.AzureSpeechVoice,
-            "de-DE-GiselaNeural");
-            //"de-DE-FlorianMultilingualNeural");
-
-        // Sprechtempo, z.B. "-10%" (langsamer), "0%", "slow". Steuert das "Runterrattern".
-        m_Rate = FirstNonEmpty(
-            Environment.GetEnvironmentVariable("AZURE_SPEECH_RATE"),
-            AppSettings.Default.AzureSpeechRate,
-            "-10%");
-
-        // Länge der Pause für den Marker "||" im Text (in Millisekunden).
-        m_BreakMs = ResolveBreakMs();
-
         m_CacheDir = Directories.GetDirectoryInApplicationDirectory(@"Data\Sounds\tts-cache");
         Directory.CreateDirectory(m_CacheDir.FullName);
-    }
-
-    private static int ResolveBreakMs()
-    {
-        if (int.TryParse(Environment.GetEnvironmentVariable("AZURE_SPEECH_BREAK_MS"), out int envMs) && envMs >= 0)
-            return envMs;
-        int settingMs = AppSettings.Default.AzureSpeechBreakMs;
-        return settingMs >= 0 ? settingMs : 350;
     }
 
     /// <summary>True, wenn ein Azure-Key vorhanden ist und TTS genutzt werden kann.</summary>
@@ -81,6 +61,82 @@ public class SpeechService
 
     /// <summary>Vollständiger Pfad des Cache-Ordners für synthetisierte WAVs.</summary>
     public string CacheDirectoryPath => m_CacheDir.FullName;
+
+    /// <summary>Die aktuell wirksame Stimme (für Vorauswahl im Dialog).</summary>
+    public string CurrentVoice => ResolveVoice(null);
+
+    /// <summary>Das aktuell wirksame Sprechtempo, z.B. "-10%" (für Vorauswahl im Dialog).</summary>
+    public string CurrentRate => ResolveRate(null);
+
+    /// <summary>
+    /// Favoriten-Stimmen aus dem Setting <c>AzureSpeechFavoriteVoices</c> (komma-/semikolongetrennt).
+    /// Werden im Auswahldialog zuerst angezeigt.
+    /// </summary>
+    public IReadOnlyList<string> FavoriteVoices
+    {
+        get
+        {
+            string raw = AppSettings.Default.AzureSpeechFavoriteVoices ?? string.Empty;
+            return raw
+                .Split(new[] { ',', ';', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                .ToList();
+        }
+    }
+
+    /// <summary>Speichert die gewählte Stimme dauerhaft (User-Setting), damit sie nach Neustart wieder aktiv ist.</summary>
+    public void SaveSelectedVoice(string voice)
+    {
+        AppSettings.Default.SelectedVoice = voice ?? string.Empty;
+        AppSettings.Default.Save();
+    }
+
+    /// <summary>Speichert das gewählte Sprechtempo dauerhaft (User-Setting), z.B. "-10%".</summary>
+    public void SaveSelectedRate(string rate)
+    {
+        AppSettings.Default.SelectedRate = rate ?? string.Empty;
+        AppSettings.Default.Save();
+    }
+
+    /// <summary>Speichert Stimme und Tempo gemeinsam in einem Rutsch.</summary>
+    public void SaveSelection(string voice, string rate)
+    {
+        AppSettings.Default.SelectedVoice = voice ?? string.Empty;
+        AppSettings.Default.SelectedRate = rate ?? string.Empty;
+        AppSettings.Default.Save();
+    }
+
+    /// <summary>
+    /// Liest die verfügbaren deutschsprachigen Stimmen (de-*) direkt von Azure aus.
+    /// Liefert eine leere Liste, wenn nicht konfiguriert oder offline.
+    /// </summary>
+    public async Task<IReadOnlyList<VoiceInfo>> GetGermanVoicesAsync()
+    {
+        if (!IsConfigured) return Array.Empty<VoiceInfo>();
+
+        try
+        {
+            var config = SpeechConfig.FromSubscription(m_Key, m_Region);
+            using var synthesizer = new SpeechSynthesizer(config, null);
+            using var result = await synthesizer.GetVoicesAsync();
+
+            if (result.Reason == ResultReason.VoicesListRetrieved)
+            {
+                return result.Voices
+                    .Where(v => v.Locale.StartsWith("de", StringComparison.OrdinalIgnoreCase))
+                    .OrderBy(v => v.Locale, StringComparer.OrdinalIgnoreCase)
+                    .ThenBy(v => v.ShortName, StringComparer.OrdinalIgnoreCase)
+                    .ToList();
+            }
+
+            Debug.WriteLine($"[SpeechService] Stimmenliste nicht abrufbar: {result.Reason} / {result.ErrorDetails}");
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"[SpeechService] Fehler beim Abruf der Stimmen: {ex.Message}");
+        }
+
+        return Array.Empty<VoiceInfo>();
+    }
 
     /// <summary>
     /// Löscht alle gecachten Sprach-WAVs (und übrig gebliebene .tmp-Reste).
@@ -115,22 +171,27 @@ public class SpeechService
     /// <summary>
     /// Liefert den Pfad zu einer WAV-Datei mit der gesprochenen Fassung von <paramref name="text"/>.
     /// Kommt aus dem Cache, falls vorhanden, sonst wird sie von Azure erzeugt und gecacht.
+    /// Mit <paramref name="voiceOverride"/> kann eine bestimmte Stimme erzwungen werden (z.B. zum Testen).
     /// Gibt null zurück, wenn nicht konfiguriert oder die Synthese fehlschlägt.
     /// </summary>
-    public async Task<string?> GetWavPathAsync(string text)
+    public async Task<string?> GetWavPathAsync(string text, string? voiceOverride = null, string? rateOverride = null)
     {
         if (!IsConfigured || string.IsNullOrWhiteSpace(text)) return null;
 
+        string voice = ResolveVoice(voiceOverride);
+        string rate = ResolveRate(rateOverride);
+        int breakMs = ResolveBreakMs();
+
         // SSML steuert Stimme, Tempo und Pausen. Es ist gleichzeitig der Cache-Schlüssel:
         // ändert sich Stimme/Tempo/Pause/Text, entsteht automatisch eine neue WAV.
-        string ssml = BuildSsml(text);
+        string ssml = BuildSsml(text, voice, rate, breakMs);
         string path = GetCachePathFor(ssml);
         if (File.Exists(path)) return path;
 
         try
         {
             var config = SpeechConfig.FromSubscription(m_Key, m_Region);
-            config.SpeechSynthesisVoiceName = m_Voice;
+            config.SpeechSynthesisVoiceName = voice;
             // 48 kHz mono passt zur Sample-Rate des NAudio-Mixers (AudioPlaybackEngine).
             config.SetSpeechSynthesisOutputFormat(SpeechSynthesisOutputFormat.Riff48Khz16BitMonoPcm);
 
@@ -162,19 +223,44 @@ public class SpeechService
         return null;
     }
 
+    // --- Konfigurationsauflösung (bei jedem Aufruf frisch) ---
+
+    private static string ResolveVoice(string? voiceOverride)
+        => FirstNonEmpty(
+            voiceOverride,
+            AppSettings.Default.SelectedVoice,                       // im Dialog gespeicherte Auswahl
+            Environment.GetEnvironmentVariable("AZURE_SPEECH_VOICE"),
+            AppSettings.Default.AzureSpeechVoice,
+            "de-DE-GiselaNeural");
+
+    private static string ResolveRate(string? rateOverride)
+        => FirstNonEmpty(
+            rateOverride,
+            AppSettings.Default.SelectedRate,                        // im Dialog gespeichertes Tempo
+            Environment.GetEnvironmentVariable("AZURE_SPEECH_RATE"),
+            AppSettings.Default.AzureSpeechRate,
+            "-10%");
+
+    private static int ResolveBreakMs()
+    {
+        if (int.TryParse(Environment.GetEnvironmentVariable("AZURE_SPEECH_BREAK_MS"), out int envMs) && envMs >= 0)
+            return envMs;
+        int settingMs = AppSettings.Default.AzureSpeechBreakMs;
+        return settingMs >= 0 ? settingMs : 350;
+    }
+
     /// <summary>
     /// Baut das SSML: setzt Stimme und Sprechtempo (prosody rate) und wandelt den
-    /// Marker "||" im Text in eine echte Pause (break) um. So lässt sich das
-    /// "Runterrattern" bremsen und an gewünschten Stellen eine Sprechpause setzen.
+    /// Marker "||" im Text in eine echte Pause (break) um.
     /// </summary>
-    private string BuildSsml(string text)
+    private static string BuildSsml(string text, string voice, string rate, int breakMs)
     {
         // Erst XML-escapen (Namen können &, < o.ä. enthalten), dann den Marker einsetzen.
         string body = System.Security.SecurityElement.Escape(text) ?? string.Empty;
-        body = body.Replace("||", $"<break time=\"{m_BreakMs}ms\"/>");
+        body = body.Replace("||", $"<break time=\"{breakMs}ms\"/>");
 
         return "<speak version=\"1.0\" xmlns=\"http://www.w3.org/2001/10/synthesis\" xml:lang=\"de-DE\">"
-             + $"<voice name=\"{m_Voice}\"><prosody rate=\"{m_Rate}\">{body}</prosody></voice></speak>";
+             + $"<voice name=\"{voice}\"><prosody rate=\"{rate}\">{body}</prosody></voice></speak>";
     }
 
     private string GetCachePathFor(string ssml)
