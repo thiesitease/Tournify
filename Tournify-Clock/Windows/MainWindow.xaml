@@ -39,16 +39,6 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>-->
 
-        <CheckBox
-            x:Name="m_CbCheckKiOutout"
-            Checked="CbCheckKiOutout_Checked"
-            Unchecked="CbCheckKiOutout_Checked"
-            VerticalAlignment="Center"
-            FontSize="30"
-            HorizontalAlignment="Center">
-            KI Stimme
-        </CheckBox>
-
         <StackPanel
             Orientation="Horizontal">
 
@@ -88,17 +78,49 @@ aktuelle Uhrzeit
         </StackPanel>
 
         <StackPanel
+            x:Name="_PanelCommands"
+            VerticalAlignment="Center"
+            Orientation="Horizontal"
+            HorizontalAlignment="Right">
+
+            <StackPanel
+               Margin="30,0"
+               HorizontalAlignment="Right"
+               VerticalAlignment="Center">
+                <CheckBox
+                    x:Name="m_CbCheckKiOutout"
+                    Checked="CbCheckKiOutout_Checked"
+                    Unchecked="CbCheckKiOutout_Checked"
+                    VerticalAlignment="Center"
+                    FontSize="30"
+                    HorizontalAlignment="Center">
+                    KI Stimme
+                </CheckBox>
+
+                <Button
+                    x:Name="m_BtnClearSpeechCache"
+                    Click="BtnClearSpeechCache_Click"
+                    Margin="0,15,0,0"
+                    Padding="10,5"
+                    FontSize="20"
+                    HorizontalAlignment="Center">
+                    Sprach-Cache löschen
+                </Button>
+
+            </StackPanel>
+
+            <StackPanel
             Margin="30,0"
             HorizontalAlignment="Right"
             VerticalAlignment="Center">
 
-            <TextBlock
+                <TextBlock
                 FontSize="40"
                 HorizontalAlignment="Center">
                 verbleibende Spielzeit
-            </TextBlock>
+                </TextBlock>
 
-            <Common:DigitalClock 
+                <Common:DigitalClock 
                 FontSize="80"
                 ShowCurrentTime="False"
                 HorizontalAlignment="Center"
@@ -106,13 +128,13 @@ aktuelle Uhrzeit
                 x:Name="m_DigitalClockRemainingPlay"
                 />
 
-            <TextBlock
+                <TextBlock
                 FontSize="40"
                 HorizontalAlignment="Center">
                 verbleibende Pause
-            </TextBlock>
+                </TextBlock>
 
-            <Common:DigitalClock 
+                <Common:DigitalClock 
                 FontSize="60"
                 IsRemainingBreakClock="True"
                 ShowCurrentTime="False"
@@ -121,6 +143,7 @@ aktuelle Uhrzeit
                 />
 
 
+            </StackPanel>
         </StackPanel>
 
         <!--<Border
@@ -194,7 +217,7 @@ aktuelle Uhrzeit
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>
-        
+
         <Canvas
             Visibility="Collapsed"
             Background="Pink"

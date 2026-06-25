@@ -87,13 +87,15 @@ namespace Gemelo.Applications.Tournify.Clock
                 {
                     if (prepare.Count == 1)
                     {
-                        AudioController.Default.Speak(AudioOutputcontent.FreeText, $"Es machen sich bitte bereit die Mannschaften {prepare[0].Team1} gegen {prepare[0].Team2} auf dem {prepare[0].FieldName} gepfiffen von {prepare[0].MatchReferee.Replace("&amp;", "und")}.");
+                        AudioController.Default.Speak(
+                            AudioOutputcontent.FreeText, 
+                            $"Es machen sich bitte bereit || die Mannschaften {prepare[0].Team1} gegen {prepare[0].Team2} || auf dem {prepare[0].FieldName}, || gepfiffen von {prepare[0].MatchReferee.Replace("&amp;", "und")}.");
                     }
                     else if (prepare.Count >= 2)
                     {
                         AudioController.Default.Speak(
-                            AudioOutputcontent.FreeText, 
-                            $"Es machen sich bitte bereit die Mannschaften {prepare[0].Team1} gegen {prepare[0].Team2} auf dem {prepare[0].FieldName} gepfiffen von {prepare[0].MatchReferee?.Replace("&amp;", "und")} und die Mannschaften {prepare[1].Team1} gegen {prepare[1].Team2} auf dem {prepare[1].FieldName} gepfiffen von {prepare[1].MatchReferee?.Replace("&amp;", "und")}.");
+                            AudioOutputcontent.FreeText,
+                            $"Es machen sich bitte bereit || die Mannschaften {prepare[0].Team1} gegen {prepare[0].Team2} || auf dem {prepare[0].FieldName}, || gepfiffen von {prepare[0].MatchReferee?.Replace("&amp;", "und")}. || Und die Mannschaften {prepare[1].Team1} gegen {prepare[1].Team2} || auf dem {prepare[1].FieldName}, || gepfiffen von {prepare[1].MatchReferee?.Replace("&amp;", "und")}.");
                     }
                 }
                 else
@@ -189,6 +191,16 @@ namespace Gemelo.Applications.Tournify.Clock
         private void CbCheckKiOutout_Checked(object sender, RoutedEventArgs e)
         {
             //AudioController.Default.UseKitOutput = m_CbCheckKiOutout.IsChecked.Value;
+        }
+
+        private void BtnClearSpeechCache_Click(object sender, RoutedEventArgs e)
+        {
+            int deleted = AudioController.Default.ClearSpeechCache();
+            MessageBox.Show(
+                $"Sprach-Cache geleert: {deleted} Datei(en) gelöscht.",
+                "Sprach-Cache",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
         }
     }
 }

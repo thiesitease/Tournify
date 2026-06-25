@@ -17,6 +17,11 @@ public class AudioController
 {
     public static AudioController Default { get; } = new AudioController();
 
+    // Neuronale Cloud-Stimme (Azure). Klingt deutlich natürlicher als System.Speech.
+    private readonly SpeechService m_SpeechService;
+
+    // Fallback: alte SAPI5-Stimme, falls kein Azure-Key konfiguriert ist oder die
+    // Synthese fehlschlägt. So spricht die App immer, auch ohne Internet/Key.
     private SpeechSynthesizer m_SpeechSynthesizer;
 
     public AudioController()
@@ -25,18 +30,56 @@ public class AudioController
         m_FolderSounds = Directories.GetDirectoryInApplicationDirectory(@"Data\Sounds");
         m_DelayedCalls = new List<DelayedCall>();
 
+        m_SpeechService = new SpeechService();
+
         m_SpeechSynthesizer = new SpeechSynthesizer();
         m_SpeechSynthesizer?.SetOutputToDefaultAudioDevice();
     }
 
     public void InitAndWelcome()
     {
-        m_SpeechSynthesizer?.Speak("Willkommen beim Kiwi Cup");
+        //SpeakAsync("Willkommen beim Kiwi Cup");
 
         InitAllSounds();
     }
 
     public void SpeakAsync(string text)
+    {
+        if (string.IsNullOrWhiteSpace(text)) return;
+
+        if (m_SpeechService.IsConfigured)
+        {
+            // Fire-and-forget: synthetisieren (bzw. aus Cache holen) und über die
+            // NAudio-Engine abspielen. Bei Fehler auf System.Speech zurückfallen.
+            _ = SpeakViaAzureAsync(text);
+        }
+        else
+        {
+            SpeakViaSapi(text);
+        }
+    }
+
+    private async Task SpeakViaAzureAsync(string text)
+    {
+        try
+        {
+            string? wavPath = await m_SpeechService.GetWavPathAsync(text);
+            if (wavPath != null)
+            {
+                AudioPlaybackEngine.Default.PlaySound(wavPath);
+                return;
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"[AudioController] Azure-Sprachausgabe fehlgeschlagen: {ex.Message}");
+        }
+
+        // Azure nicht verfügbar/fehlgeschlagen -> Fallback auf SAPI5.
+        SpeakViaSapi(text);
+    }
+
+    private void SpeakViaSapi(string text)
     {
         try
         {
@@ -44,9 +87,12 @@ public class AudioController
         }
         catch (Exception ex)
         {
-            Debugger.Break();
+            Debug.WriteLine($"[AudioController] System.Speech fehlgeschlagen: {ex.Message}");
         }
     }
+
+    /// <summary>Löscht den Cache der synthetisierten Sprach-WAVs. Gibt die Anzahl gelöschter Dateien zurück.</summary>
+    public int ClearSpeechCache() => m_SpeechService.ClearCache();
 
     //public bool UseKitOutput { get; set; }
 
