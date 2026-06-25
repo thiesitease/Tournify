@@ -91,7 +91,9 @@ namespace Gemelo.Applications.Tournify.Clock
                     }
                     else if (prepare.Count >= 2)
                     {
-                        AudioController.Default.Speak(AudioOutputcontent.FreeText, $"Die KIWI KI übernimmt die Macht! Ha ha ha! Es machen sich bitte bereit die Mannschaften {prepare[0].Team1} gegen {prepare[0].Team2} auf dem {prepare[0].FieldName} gepfiffen von {prepare[0].MatchReferee.Replace("&amp;", "und")} und die Mannschaften {prepare[1].Team1} gegen {prepare[1].Team2} auf dem {prepare[1].FieldName} gepfiffen von {prepare[1].MatchReferee.Replace("&amp;", "und")}.");
+                        AudioController.Default.Speak(
+                            AudioOutputcontent.FreeText, 
+                            $"Es machen sich bitte bereit die Mannschaften {prepare[0].Team1} gegen {prepare[0].Team2} auf dem {prepare[0].FieldName} gepfiffen von {prepare[0].MatchReferee?.Replace("&amp;", "und")} und die Mannschaften {prepare[1].Team1} gegen {prepare[1].Team2} auf dem {prepare[1].FieldName} gepfiffen von {prepare[1].MatchReferee?.Replace("&amp;", "und")}.");
                     }
                 }
                 else

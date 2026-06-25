@@ -25,7 +25,7 @@ public class AudioController
         m_FolderSounds = Directories.GetDirectoryInApplicationDirectory(@"Data\Sounds");
         m_DelayedCalls = new List<DelayedCall>();
 
-        //m_SpeechSynthesizer = new SpeechSynthesizer();
+        m_SpeechSynthesizer = new SpeechSynthesizer();
         m_SpeechSynthesizer?.SetOutputToDefaultAudioDevice();
     }
 

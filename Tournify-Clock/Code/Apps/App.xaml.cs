@@ -21,8 +21,8 @@ namespace Gemelo.Applications.Tournify.Clock.Apps
 
 #if (DEBUG)
 
-        public readonly DateTime FakeNowStartTime = UseFaketime ? new DateTime(2025, 06, 22, 19, 30, 00) : DateTime.Now;
-        public readonly double FakeTimeFactor = UseFaketime ? 20.0 : 1.0;
+        public readonly DateTime FakeNowStartTime = UseFaketime ? new DateTime(2025, 06, 22, 16, 30, 00) : DateTime.Now;
+        public readonly double FakeTimeFactor = UseFaketime ? 10.0 : 1.0;
 
 
 #endif
