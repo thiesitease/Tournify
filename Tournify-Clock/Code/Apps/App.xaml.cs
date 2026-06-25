@@ -22,7 +22,7 @@ namespace Gemelo.Applications.Tournify.Clock.Apps
 #if (DEBUG)
 
         public readonly DateTime FakeNowStartTime = UseFaketime ? new DateTime(2026, 06, 27, 07, 50, 00) : DateTime.Now;
-        public readonly double FakeTimeFactor = UseFaketime ? 10.0 : 1.0;
+        public readonly double FakeTimeFactor = UseFaketime ? 20.0 : 1.0;
 
 
 #endif
@@ -67,10 +67,14 @@ namespace Gemelo.Applications.Tournify.Clock.Apps
             if (true)
             {
                 //string demoUrl = "https://www.tournify.de/live/develop-test/present";
+                //MatchDuration = TimeSpan.FromMinutes(2);
+                //MatchPrepareBeforeNextStart = TimeSpan.FromMinutes(6);
+                
                 string demoUrl = Settings.Default.TournifyUrl;
+                MatchDuration = Settings.Default.MatchDuration;
+                MatchPrepareBeforeNextStart = TimeSpan.FromMinutes(15);
+                
                 Connector = new TournifyConnector(new Uri(demoUrl));
-                MatchDuration = TimeSpan.FromMinutes(2);
-                MatchPrepareBeforeNextStart = TimeSpan.FromMinutes(6);
             }
             else
             {

@@ -85,16 +85,16 @@ namespace Gemelo.Applications.Tournify.Clock.Properties {
                 return ((string)(this["AzureSpeechVoice"]));
             }
         }
-
+        
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("-10%")]
+        [global::System.Configuration.DefaultSettingValueAttribute("-5%")]
         public string AzureSpeechRate {
             get {
                 return ((string)(this["AzureSpeechRate"]));
             }
         }
-
+        
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("350")]

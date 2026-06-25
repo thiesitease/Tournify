@@ -78,24 +78,24 @@ namespace Gemelo.Applications.Tournify.Clock
                 else if (IsUpcomingMatch(match) && upcoming.Count < Settings.Default.DisplayNextMatchesCount) upcoming.Add(match);
             }
 
-            if (m_MatchesDisplayReadyToPrepare.Matches != null && 
-                m_MatchesDisplayReadyToPrepare.Matches.Count == 0 && 
+            if (m_MatchesDisplayReadyToPrepare.Matches != null &&
+                m_MatchesDisplayReadyToPrepare.Matches.Count == 0 &&
                 prepare.Count > 0)
             {
                 _ = ShowWarning();
-                if (m_CbCheckKiOutout.IsChecked == true)
+                if (m_CbCheckKiOutout.IsActive == true)
                 {
                     if (prepare.Count == 1)
                     {
                         AudioController.Default.Speak(
-                            AudioOutputcontent.FreeText, 
-                            $"Es machen sich bitte bereit || die Mannschaften {prepare[0].Team1} gegen {prepare[0].Team2} || auf dem {prepare[0].FieldName}, || gepfiffen von {prepare[0].MatchReferee.Replace("&amp;", "und")}.");
+                            AudioOutputcontent.FreeText,
+                            $"Es machen sich bitte bereit || die Mannschaften {prepare[0].Team1} gegen {prepare[0].Team2} || auf dem {ToPlatzDativ(prepare[0].FieldName)}, || gepfiffen von {prepare[0].MatchReferee.Replace("&amp;", "und")}.");
                     }
                     else if (prepare.Count >= 2)
                     {
                         AudioController.Default.Speak(
                             AudioOutputcontent.FreeText,
-                            $"Es machen sich bitte bereit || die Mannschaften {prepare[0].Team1} gegen {prepare[0].Team2} || auf dem {prepare[0].FieldName}, || gepfiffen von {prepare[0].MatchReferee?.Replace("&amp;", "und")}. || Und die Mannschaften {prepare[1].Team1} gegen {prepare[1].Team2} || auf dem {prepare[1].FieldName}, || gepfiffen von {prepare[1].MatchReferee?.Replace("&amp;", "und")}.");
+                            $"Es machen sich bitte bereit || die Mannschaften {prepare[0].Team1} gegen {prepare[0].Team2} || auf dem {ToPlatzDativ(prepare[0].FieldName)}, || gepfiffen von {prepare[0].MatchReferee?.Replace("&amp;", "und")}. || Und die Mannschaften {prepare[1].Team1} gegen {prepare[1].Team2} || auf dem {ToPlatzDativ(prepare[1].FieldName)}, || gepfiffen von {prepare[1].MatchReferee?.Replace("&amp;", "und")}.");
                     }
                 }
                 else
@@ -185,13 +185,37 @@ namespace Gemelo.Applications.Tournify.Clock
             else return true;
         }
 
+        /// <summary>
+        /// Platznamen kommen von der Website im Nominativ (z.B. "Grüner Platz").
+        /// Für die Ansage "auf dem ..." brauchen wir den Dativ (z.B. "grünen Platz").
+        /// Statische Zuordnung – bei Bedarf hier weitere Plätze ergänzen.
+        /// </summary>
+        private static readonly Dictionary<string, string> s_PlatzDativ =
+            new(StringComparer.OrdinalIgnoreCase)
+            {
+                ["Grüner Platz"] = "grünen Platz",
+                ["Blauer Platz"] = "blauen Platz",
+                ["Roter Platz"] = "roten Platz",
+                ["Gelber Platz"] = "gelben Platz",
+                ["Weißer Platz"] = "weißen Platz",
+                ["Schwarzer Platz"] = "schwarzen Platz",
+            };
+
+        /// <summary>Wandelt den Platznamen in die Dativform für die Ansage um (unbekannte bleiben unverändert).</summary>
+        private static string ToPlatzDativ(string? fieldName)
+        {
+            if (string.IsNullOrWhiteSpace(fieldName)) return string.Empty;
+            string key = fieldName.Trim();
+            return s_PlatzDativ.TryGetValue(key, out string? dativ) ? dativ : key;
+        }
+
         #endregion EventHandler
 
 
-        private void CbCheckKiOutout_Checked(object sender, RoutedEventArgs e)
-        {
-            //AudioController.Default.UseKitOutput = m_CbCheckKiOutout.IsChecked.Value;
-        }
+        //private void CbCheckKiOutout_Checked(object sender, RoutedEventArgs e)
+        //{
+        //    //AudioController.Default.UseKitOutput = m_CbCheckKiOutout.IsChecked.Value;
+        //}
 
         private void BtnClearSpeechCache_Click(object sender, RoutedEventArgs e)
         {
@@ -201,6 +225,11 @@ namespace Gemelo.Applications.Tournify.Clock
                 "Sprach-Cache",
                 MessageBoxButton.OK,
                 MessageBoxImage.Information);
+        }
+
+        private void BtnSelectVoice_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

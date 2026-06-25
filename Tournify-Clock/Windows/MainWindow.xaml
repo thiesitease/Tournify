@@ -1,10 +1,11 @@
 ﻿<Window xmlns:Matches="clr-namespace:Gemelo.Applications.Tournify.Clock.Controls.Matches"  
-    xmlns:Common="clr-namespace:Gemelo.Applications.Tournify.Clock.Controls.Common"  
-    x:Class="Gemelo.Applications.Tournify.Clock.MainWindow"
+    xmlns:Common="clr-namespace:Gemelo.Applications.Tournify.Clock.Controls.Common"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:wpfex="http://schema.gemelo.de/components/wpfex"  
+    x:Class="Gemelo.Applications.Tournify.Clock.MainWindow"
     mc:Ignorable="d"
     WindowState="Maximized"
     Title="gemelo's Tournify Clock" Height="1080" Width="1920">
@@ -57,9 +58,7 @@
 
                 <TextBlock
                     FontSize="40"
-                    HorizontalAlignment="Center">
-aktuelle Uhrzeit
-                </TextBlock>
+                    HorizontalAlignment="Center"><Run Text="aktuelle Uhrzeit"/></TextBlock>
 
                 <Common:DigitalClock 
                 FontSize="80"
@@ -87,25 +86,67 @@ aktuelle Uhrzeit
                Margin="30,0"
                HorizontalAlignment="Right"
                VerticalAlignment="Center">
-                <CheckBox
+               
+                <!--<CheckBox
                     x:Name="m_CbCheckKiOutout"
-                    Checked="CbCheckKiOutout_Checked"
-                    Unchecked="CbCheckKiOutout_Checked"
                     VerticalAlignment="Center"
                     FontSize="30"
-                    HorizontalAlignment="Center">
-                    KI Stimme
-                </CheckBox>
+                    HorizontalAlignment="Center" 
+                    Content="KI Stimme"/>-->
 
-                <Button
+                <wpfex:PathButton 
+                    IsActive="True"
+                    ForegroundActive="White"
+                    BackgroundActive="DarkRed"
+                    IsAutoToggleEnabled="True"
+                    BorderBrush="DarkRed"
+                    BorderThickness="2"
+                    CornerRadius="10"
+                    x:Name="m_CbCheckKiOutout"
+                    Click="BtnClearSpeechCache_Click"
+                    Margin="0,10"
+                    FontSize="20"
+                    HorizontalAlignment="Center" 
+                    >
+                    <TextBlock
+                        Padding="10">
+                    KI Stimme
+
+                    </TextBlock>
+                </wpfex:PathButton>
+
+                <wpfex:PathButton 
+                   BorderBrush="DarkRed"
+                   BorderThickness="2"
+                   CornerRadius="10"
+                   Click="BtnSelectVoice_Click"
+                   Margin="0,10"
+                   FontSize="20"
+                   HorizontalAlignment="Center" 
+                   >
+                    <TextBlock
+                       Padding="10">
+                   KI Stimme auswählen
+
+                    </TextBlock>
+                </wpfex:PathButton>
+
+                <wpfex:PathButton 
+                    BorderBrush="DarkRed"
+                    BorderThickness="2"
+                    CornerRadius="10"
                     x:Name="m_BtnClearSpeechCache"
                     Click="BtnClearSpeechCache_Click"
-                    Margin="0,15,0,0"
-                    Padding="10,5"
+                    Margin="0,10"
                     FontSize="20"
-                    HorizontalAlignment="Center">
+                    HorizontalAlignment="Center" 
+                    >
+                    <TextBlock
+                        Padding="10">
                     Sprach-Cache löschen
-                </Button>
+
+                    </TextBlock>
+                </wpfex:PathButton>
 
             </StackPanel>
 
@@ -116,9 +157,7 @@ aktuelle Uhrzeit
 
                 <TextBlock
                 FontSize="40"
-                HorizontalAlignment="Center">
-                verbleibende Spielzeit
-                </TextBlock>
+                HorizontalAlignment="Center"><Run Text="verbleibende Spielzeit"/></TextBlock>
 
                 <Common:DigitalClock 
                 FontSize="80"
@@ -130,9 +169,7 @@ aktuelle Uhrzeit
 
                 <TextBlock
                 FontSize="40"
-                HorizontalAlignment="Center">
-                verbleibende Pause
-                </TextBlock>
+                HorizontalAlignment="Center"><Run Text="verbleibende Pause"/></TextBlock>
 
                 <Common:DigitalClock 
                 FontSize="60"
@@ -163,9 +200,7 @@ aktuelle Uhrzeit
                     <TextBlock
                   Margin="20,20,0,0"
                   FontSize="30"
-                  HorizontalAlignment="Left">
-                  aktuelle Spiele
-                    </TextBlock>
+                  HorizontalAlignment="Left"><Run Text="aktuelle Spiele"/></TextBlock>
 
                     <Matches:MatchesDisplay
                     MinHeight="60"
@@ -182,9 +217,7 @@ aktuelle Uhrzeit
                     <TextBlock
                   Margin="20,20,0,0"
                   FontSize="30"
-                  HorizontalAlignment="Left">
-                  bereit machen
-                    </TextBlock>
+                  HorizontalAlignment="Left"><Run Text="bereit machen"/></TextBlock>
 
                     <Matches:MatchesDisplay
                     MinHeight="60"
@@ -203,9 +236,7 @@ aktuelle Uhrzeit
             Margin="20,20,0,0"
             Grid.Row="3"
             FontSize="30"
-            HorizontalAlignment="Left">
-            nächste Spiele
-                    </TextBlock>
+            HorizontalAlignment="Left"><Run Text="nächste Spiele"/></TextBlock>
 
                     <Matches:MatchesDisplay
             VerticalAlignment="Top"
